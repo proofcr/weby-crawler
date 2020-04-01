@@ -1,0 +1,8 @@
+crawler:
+  cron:
+    expression: '0 */1 * * * *'
+  parallelSites: 4
+
+spring:
+  profiles:
+      include: h2

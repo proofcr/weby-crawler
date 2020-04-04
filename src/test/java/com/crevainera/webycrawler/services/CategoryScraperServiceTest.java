@@ -5,12 +5,15 @@ import com.crevainera.webycrawler.entities.ScrapRule;
 import com.crevainera.webycrawler.exception.WebyException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,56 +22,57 @@ import static org.junit.jupiter.api.Assertions.*;
 class CategoryScraperServiceTest {
 
     public static final String SITE_DIRECTORY = "sites/";
-    public static final String SITE_NOTICIASLASFLORES_HTML = SITE_DIRECTORY + "noticiaslasflores.html";
     public static final String SITE_AHORALASFLORES_HTML = SITE_DIRECTORY + "ahoralasflores.html";
+    public static final String SITE_NOTICIASLASFLORES_HTML = SITE_DIRECTORY + "noticiaslasflores.html";
     public static final String SITE_PLAY_RADIOS_HTML = SITE_DIRECTORY + "playradios.html";
 
-    @Test
-    public void scrapHtmlDocumentWhenCategoryIsAhoraLasFlores() throws WebyException {
-        Document document = getDocument(SITE_AHORALASFLORES_HTML);
+    private static Collection<Object[]> scrapRuleAndExpectedListSize() {
+        return Arrays.asList(new Object[][]{
+                {
+                        SITE_AHORALASFLORES_HTML,
+                        "$input.getElementsByTag(\"article\")",
+                        "$input.getElementsByTag(\"h1\").first().getElementsByTag(\"a\").first().textNodes().get(0).text()",
+                        "$input.getElementsByTag(\"h1\").first().getElementsByTag(\"a\").first().attr(\"href\")",
+                        "($input.getElementsByTag(\"img\").first()!=null) ? $input.getElementsByTag(\"img\").first().attr(\"data-src\") : \"\"",
+                        14
 
-        ScrapRule scrapRule = new ScrapRule();
-        scrapRule.setHeadline("$input.getElementsByTag(\"article\")");
-        scrapRule.setTitle("$input.getElementsByTag(\"h1\").first().getElementsByTag(\"a\").first().textNodes().get(0).text()");
-        scrapRule.setImage("$input.getElementsByTag(\"h1\").first().getElementsByTag(\"a\").first().attr(\"href\")");
-        scrapRule.setLink("($input.getElementsByTag(\"img\").first()!=null) ? $input.getElementsByTag(\"img\").first().attr(\"data-src\") : \"\"");
-
-        CategoryScraperService categoryScraperService = new CategoryScraperService();
-        List<HeadLineDto> list = categoryScraperService.scrap(document, scrapRule);
-        assertNotNull(list);
-        assertEquals(14, list.size());
+                },
+                {
+                        SITE_NOTICIASLASFLORES_HTML,
+                        "$input.getElementsByTag(\"article\")",
+                        "$input.getElementsByTag(\"h2\").first().getElementsByTag(\"a\").first().textNodes().get(0).text()",
+                        "$input.getElementsByTag(\"h2\").first().getElementsByTag(\"a\").first().attr(\"href\")",
+                        "($input.getElementsByTag(\"img\").first()!=null) ? $input.getElementsByTag(\"img\").first().attr(\"src\") : \"\"",
+                        24
+                },
+                {
+                        SITE_PLAY_RADIOS_HTML,
+                        "$input.getElementsByClass(\"td_module_wrap\")",
+                        "$input.getElementsByTag(\"h3\").first().getElementsByTag(\"a\").first().text().intern()",
+                        "$input.getElementsByTag(\"h3\").first().getElementsByTag(\"a\").first().attr(\"href\")",
+                        "$input.getElementsByClass(\"td_module_wrap\").first().getElementsByClass(\"entry-thumb\").attr(\"data-img-url\")",
+                        21
+                }
+        });
     }
 
-    @Test
-    public void scrapHtmlDocumentWhenCategoryIsNoticiasLasFlores() throws WebyException {
-        Document document = getDocument(SITE_NOTICIASLASFLORES_HTML);
-
+    @ParameterizedTest
+    @MethodSource("scrapRuleAndExpectedListSize")
+    public void scrapedHeadlinesListSizeShouldMatchWithExpectedListSize(
+            final String siteHTMLFilePath, final String headline, final String title, final String image,
+            final String link, final Integer expectedResultListSize) throws WebyException {
+        Document document = getDocument(siteHTMLFilePath);
         ScrapRule scrapRule = new ScrapRule();
-        scrapRule.setHeadline("$input.getElementsByTag(\"article\")");
-        scrapRule.setTitle("$input.getElementsByTag(\"h2\").first().getElementsByTag(\"a\").first().textNodes().get(0).text()");
-        scrapRule.setImage("$input.getElementsByTag(\"h2\").first().getElementsByTag(\"a\").first().attr(\"href\")");
-        scrapRule.setLink("($input.getElementsByTag(\"img\").first()!=null) ? $input.getElementsByTag(\"img\").first().attr(\"src\") : \"\"");
-
+        scrapRule.setHeadline(headline);
+        scrapRule.setTitle(title);
+        scrapRule.setImage(image);
+        scrapRule.setLink(link);
         CategoryScraperService categoryScraperService = new CategoryScraperService();
+
         List<HeadLineDto> list = categoryScraperService.scrap(document, scrapRule);
+
         assertNotNull(list);
-        assertEquals(24, list.size());
-    }
-
-    @Test
-    public void scrapHtmlDocumentWhenCategoryIsPlayRadios() throws WebyException {
-        Document document = getDocument(SITE_PLAY_RADIOS_HTML);
-
-        ScrapRule scrapRule = new ScrapRule();
-        scrapRule.setHeadline("$input.getElementsByClass(\"td_module_wrap\")");
-        scrapRule.setTitle("$input.getElementsByTag(\"h3\").first().getElementsByTag(\"a\").first().text().intern()");
-        scrapRule.setLink("$input.getElementsByTag(\"h3\").first().getElementsByTag(\"a\").first().attr(\"href\")");
-        scrapRule.setImage("$input.getElementsByClass(\"td_module_wrap\").first().getElementsByClass(\"entry-thumb\").attr(\"data-img-url\")");
-
-        CategoryScraperService categoryScraperService = new CategoryScraperService();
-        List<HeadLineDto> list = categoryScraperService.scrap(document, scrapRule);
-        assertNotNull(list);
-        assertEquals(21, list.size());
+        assertEquals(expectedResultListSize, list.size());
     }
 
     public Document getDocument(final String path) {

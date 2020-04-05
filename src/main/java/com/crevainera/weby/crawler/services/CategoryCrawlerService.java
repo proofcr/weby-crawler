@@ -44,13 +44,18 @@ public class CategoryCrawlerService {
     public void crawlScrapAndSave(final Site site) {
         log.info("crawlScrapAndSave site: " + site.getUrl() + " (" + site.getTitle()+ ")");
 
-        site.getCategoryList().forEach(category -> crawlScrapAndSave(site, category));
+        site.getCategoryList().forEach(category -> {
+            if (category.getEnabled()) {
+                crawlScrapAndSave(site, category);
+            }
+        });
     }
 
     private void crawlScrapAndSave(final Site site, final Category category) {
         ScrapRule scrapRule = category.getScrapRule();
         try {
             Document document = documentFromHtml.getDocument(category.getUrl());
+            log.info("crawling category: " + category.getUrl());
 
             for (HeadLineDto headLineDto : scrapService.scrap(document, scrapRule)) {
 
@@ -61,7 +66,7 @@ public class CategoryCrawlerService {
                     article.setTitle(headLineDto.getTitle());
                     article.setUrl(headLineDto.getUrl());
 
-                    if (StringUtils.isNotBlank(headLineDto.getThumbUrl())) {
+                    if (site.getScrapThumbEnabled() && (StringUtils.isNotBlank(headLineDto.getThumbUrl()))) {
                         if (headLineDto.getThumbUrl().startsWith(HTTP_PROTOCOL)) {
                             article.setThumbUrl(headLineDto.getThumbUrl());
                         } else {
@@ -71,6 +76,8 @@ public class CategoryCrawlerService {
                             article.setThumb(thumbService.resize(new URL(article.getThumbUrl())));
                         } catch (MalformedURLException e) {
                             log.error(MALFORMED_URL.getLabel(), e.getStackTrace());
+                        } catch (WebyException e) {
+                            log.error(String.format(CRAWLER_ERROR.getLabel(), e.getMessage(), category.getUrl()));
                         }
                     }
 

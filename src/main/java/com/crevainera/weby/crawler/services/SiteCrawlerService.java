@@ -27,7 +27,8 @@ public class SiteCrawlerService {
     }
 
     public void  executeParallelCrawlersBySite() {
-        List<Site> sites =  Lists.newArrayList(siteRepository.findAll());
+        List<Site> sites =  Lists.newArrayList(siteRepository.findByEnabledTrue());
+
         for (Site site : sites) {
             poolForSites.submit(() -> crawlerService.crawlScrapAndSave(site));
         }

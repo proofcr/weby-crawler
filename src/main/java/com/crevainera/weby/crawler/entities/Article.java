@@ -32,6 +32,6 @@ public class Article {
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id")
     )
-    @ManyToMany()
+    @ManyToMany(fetch=FetchType.EAGER)
     private Set<Label> labelList = new HashSet<>();
 }

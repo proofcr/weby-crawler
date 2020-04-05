@@ -16,6 +16,7 @@ public class Category {
     private long id;
     private String title;
     private String url;
+    private Boolean enabled;
     @Column(name = "site_id")
     private long siteId;
 

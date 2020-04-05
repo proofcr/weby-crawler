@@ -18,6 +18,9 @@ public class Site {
     private String title;
     private String description;
     private String url;
+    private Boolean enabled;
+    @Column(name = "scrap_thumb_enabled")
+    private Boolean scrapThumbEnabled;
 
     @OneToMany(
             fetch=FetchType.EAGER,

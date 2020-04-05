@@ -2,6 +2,7 @@ package com.crevainera.weby.crawler.services;
 
 import com.crevainera.weby.crawler.constant.WebyConstant;
 import com.crevainera.weby.crawler.exception.WebyException;
+import com.sun.image.codec.jpeg.JPEGCodec;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Iterator;
 
 
@@ -23,7 +25,9 @@ public class ImageService {
 
     public byte[] resize(final URL url, final Integer maxWidth, final Integer maxHeight) throws WebyException {
         try {
-            BufferedImage img = ImageIO.read(url);
+            InputStream inputStream = url.openConnection().getInputStream();
+
+            BufferedImage img = ImageIO.read(inputStream);
 
             int scaledWidth = 0, scaledHeight = 0;
 
@@ -52,7 +56,7 @@ public class ImageService {
             return out.toByteArray();
 
         } catch (IOException ioException) {
-            log.error(ioException.getMessage() + " : " + url);
+            log.error(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.getLabel(), ioException.getStackTrace().toString());
             throw new WebyException(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.getLabel());
         }
     }

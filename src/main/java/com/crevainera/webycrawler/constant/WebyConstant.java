@@ -11,7 +11,8 @@ public enum WebyConstant {
     SCRAPER_ERROR_TITLE("Error scraping headline's title"),
     SCRAPER_ERROR_LINK("Error scraping headline's link"),
     SCRAPER_ERROR_THUMB("Error scraping headline's thumb image"),
-    IMAGE_SERVICE_IMAGE_NAME("Error resizing image");
+    IMAGE_SERVICE_IMAGE_NAME("Error resizing image"),
+    MALFORMED_URL("Malformed URL");
 
     private String label;
 }

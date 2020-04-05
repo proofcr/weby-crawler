@@ -17,7 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
-import static com.crevainera.webycrawler.constant.WebyConstant.CRAWLER_ERROR;
+import static com.crevainera.webycrawler.constant.WebyConstant.*;
 
 @Service
 @Slf4j
@@ -68,7 +68,11 @@ public class CategoryCrawlerService {
                         } else {
                             article.setThumbUrl(site.getUrl() + BAR_CHARACTER + headLineDto.getThumbUrl());
                         }
-                        article.setThumb(thumbService.resize(new URL(headLineDto.getThumbUrl())));
+                        try {
+                            article.setThumb(thumbService.resize(new URL(headLineDto.getThumbUrl())));
+                        } catch (MalformedURLException e) {
+                            log.error(MALFORMED_URL.name(), e.getStackTrace().toString());
+                        }
                     }
 
                     article.setScrapDate(new Date());
@@ -89,7 +93,7 @@ public class CategoryCrawlerService {
                 }
             }
 
-        } catch (WebyException | MalformedURLException e) {
+        } catch (WebyException e) {
             log.error(String.format(CRAWLER_ERROR.name(), e.getMessage(), category.getUrl()));
         }
     }

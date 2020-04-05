@@ -1,6 +1,9 @@
 package com.crevainera.webycrawler.services;
 
+import com.crevainera.webycrawler.constant.WebyConstant;
+import com.crevainera.webycrawler.exception.WebyException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -9,9 +12,9 @@ import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Iterator;
 
 
@@ -19,55 +22,62 @@ import java.util.Iterator;
 @Slf4j
 public class ImageService {
 
-    public static byte[] resize(File file, int maxWidth, int maxHeight) throws IOException {
-        int scaledWidth = 0, scaledHeight = 0;
+    private Integer maxWidth;
+    private Integer maxHeight;
 
-        BufferedImage img = ImageIO.read(file);
-
-        scaledWidth = maxWidth;
-        scaledHeight = (int) (img.getHeight() * ( (double) scaledWidth / img.getWidth() ));
-
-        if (scaledHeight> maxHeight) {
-            scaledHeight = maxHeight;
-            scaledWidth= (int) (img.getWidth() * ( (double) scaledHeight/ img.getHeight() ));
-
-            if (scaledWidth > maxWidth) {
-                scaledWidth = maxWidth;
-                scaledHeight = maxHeight;
-            }
-        }
-
-        Image resized =  img.getScaledInstance( scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-
-        BufferedImage buffered = new BufferedImage(scaledWidth, scaledHeight, Image.SCALE_REPLICATE);
-        buffered.getGraphics().drawImage(resized, 0, 0 , null);
-
-        String formatName = getFormatName(file) ;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write(buffered, formatName, out);
-        return out.toByteArray();
+    public ImageService(@Value("${scraper.thumb.maxWidth}") final Integer maxWidth,
+                        @Value("${scraper.thumb.maxWidth}") final Integer maxHeight) {
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
     }
 
-    private static String getFormatName(final ImageInputStream iis) {
+    public byte[] resize(final URL url) throws WebyException {
         try {
-            Iterator iterator = ImageIO.getImageReaders(iis);
-            if (!iterator.hasNext()) {
-                return null;
+            BufferedImage img = ImageIO.read(url);
+
+            int scaledWidth = 0, scaledHeight = 0;
+
+            scaledWidth = maxWidth;
+            scaledHeight = (int) (img.getHeight() * ((double) scaledWidth / img.getWidth()));
+
+            if (scaledHeight> maxHeight) {
+                scaledHeight = maxHeight;
+                scaledWidth= (int) (img.getWidth() * ((double) scaledHeight/ img.getHeight()));
+
+                if (scaledWidth > maxWidth) {
+                    scaledWidth = maxWidth;
+                    scaledHeight = maxHeight;
+                }
             }
-            ImageReader reader = (ImageReader) iterator.next();
-            iis.close();
-            return reader.getFormatName();
-        } catch (IOException e) {
-            log.error(e.getStackTrace().toString());
+
+            Image resized =  img.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+
+            BufferedImage buffered = new BufferedImage(scaledWidth, scaledHeight, Image.SCALE_REPLICATE);
+            buffered.getGraphics().drawImage(resized, 0, 0 , null);
+
+            String formatName = getImageExtensionFromBytes(url) ;
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(buffered, formatName, out);
+
+            return out.toByteArray();
+
+        } catch (IOException ioException) {
+            log.error(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.name(), ioException.getStackTrace().toString());
+            throw new WebyException(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.name());
         }
-        return null;
     }
 
-    private static String getFormatName(final File file) throws IOException {
-        return getFormatName(ImageIO.createImageInputStream(file));
-    }
+    private String getImageExtensionFromBytes(final URL url) throws IOException {
+        InputStream is = url.openStream();
+        ImageInputStream iis = ImageIO.createImageInputStream(is);
+        Iterator iterator = ImageIO.getImageReaders(iis);
+        if (!iterator.hasNext()) {
+            return null;
+        }
+        ImageReader reader = (ImageReader) iterator.next();
+        is.close();
+        iis.close();
 
-    private static String getFormatName(final InputStream inputStream) throws IOException {
-        return getFormatName(ImageIO.createImageInputStream(inputStream));
+        return reader.getFormatName();
     }
 }

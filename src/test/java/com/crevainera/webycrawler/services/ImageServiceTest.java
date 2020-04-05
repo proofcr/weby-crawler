@@ -1,5 +1,7 @@
 package com.crevainera.webycrawler.services;
 
+import com.crevainera.webycrawler.exception.WebyException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -26,21 +28,22 @@ public class ImageServiceTest {
 
     private ImageService imageService;
 
+    @BeforeEach
+    public void setUp() {
+        imageService = new ImageService(MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"gif", "jpg", "png"})
     public void generatedThumbBytesShouldMatchWithExpectedThumbBytes(final String fileExtension)
-            throws IOException, URISyntaxException {
-        imageService = new ImageService();
-
+            throws WebyException, URISyntaxException, IOException {
         URL inputPath = ClassLoader.getSystemResource(INPUT_PATH + fileExtension);
-        File inputFile = new File(inputPath.toURI());
-        byte[] actualImageArray = imageService.resize(inputFile, MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT);
+        byte[] actualImageArray = imageService.resize(inputPath);
 
         URL expectedUrl = ClassLoader.getSystemResource(OUTPUT_PATH + fileExtension);
         File expectedFile = new File(expectedUrl.toURI());
         byte[] expectedImageArray = Files.readAllBytes(expectedFile.toPath());
 
         assertTrue(Arrays.equals(expectedImageArray, actualImageArray));
-
     }
 }

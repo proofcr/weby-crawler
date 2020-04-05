@@ -1,7 +1,7 @@
 crawler:
   cron:
-    expression: '0 */1 * * * *'
-  parallelSites: 4
+    expression: '0 */15 * * * *'
+  parallelSites: 1
 
 spring:
   profiles:

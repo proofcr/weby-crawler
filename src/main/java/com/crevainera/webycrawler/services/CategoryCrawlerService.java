@@ -7,13 +7,14 @@ import com.crevainera.webycrawler.entities.ScrapRule;
 import com.crevainera.webycrawler.entities.Site;
 import com.crevainera.webycrawler.exception.WebyException;
 import com.crevainera.webycrawler.repositories.ArticleRepository;
-import com.crevainera.webycrawler.repositories.LabelRepository;
-import com.crevainera.webycrawler.repositories.ScrapRuleRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 
 import static com.crevainera.webycrawler.constant.WebyConstant.CRAWLER_ERROR;
@@ -28,11 +29,14 @@ public class CategoryCrawlerService {
     private CategoryScraperService scrapService;
     private HtmlDocumentService documentFromHtml;
     private ArticleRepository articleRepository;
+    private ImageService imageService;
 
     @Autowired
-    public CategoryCrawlerService(final CategoryScraperService scrapService,
+    public CategoryCrawlerService(final ImageService imageService,
+                                  final CategoryScraperService scrapService,
                                   final HtmlDocumentService documentFromHtml,
                                   final ArticleRepository articleRepository) {
+        this.imageService = imageService;
         this.scrapService = scrapService;
         this.documentFromHtml = documentFromHtml;
         this.articleRepository = articleRepository;
@@ -46,7 +50,7 @@ public class CategoryCrawlerService {
 
     private void crawlScrapAndSave(final Site site, final Category category) {
         ScrapRule scrapRule = category.getScrapRule();
-         try {
+        try {
             Document document = documentFromHtml.getDocument(category.getUrl());
 
             for (HeadLineDto headLineDto : scrapService.scrap(document, scrapRule)) {
@@ -57,18 +61,22 @@ public class CategoryCrawlerService {
                     Article article = new Article();
                     article.setTitle(headLineDto.getTitle());
                     article.setUrl(headLineDto.getUrl());
-                    if (headLineDto.getThumbUrl().startsWith(HTTP_PROTOCOL)) {
-                        article.setThumbUrl(headLineDto.getThumbUrl());
-                    } else {
-                        article.setThumbUrl(site.getUrl() + BAR_CHARACTER + headLineDto.getThumbUrl());
+
+                    if (StringUtils.isNotBlank(headLineDto.getThumbUrl())) {
+                        if (headLineDto.getThumbUrl().startsWith(HTTP_PROTOCOL)) {
+                            article.setThumbUrl(headLineDto.getThumbUrl());
+                        } else {
+                            article.setThumbUrl(site.getUrl() + BAR_CHARACTER + headLineDto.getThumbUrl());
+                        }
+                        article.setThumb(imageService.resize(new URL(headLineDto.getThumbUrl())));
                     }
+
                     article.setScrapDate(new Date());
                     article.setSiteId(category.getSiteId());
                     article.getLabelList().add(category.getLabel());
                     articleRepository.save(article);
 
-                    // TODO transform image url into a thumb as save as binary in Article table
-                    // TODO content scrap
+                    // TODO news'body scrap
 
                     log.info(headLineDto.getUrl() + " added");
                 } else if (!articleStored.getLabelList().contains(category.getLabel())) {
@@ -81,8 +89,8 @@ public class CategoryCrawlerService {
                 }
             }
 
-        } catch (WebyException e) {
-            log.error(String.format(CRAWLER_ERROR.name(), e.getMessage(),  category.getUrl()));
+        } catch (WebyException | MalformedURLException e) {
+            log.error(String.format(CRAWLER_ERROR.name(), e.getMessage(), category.getUrl()));
         }
     }
 

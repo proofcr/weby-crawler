@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class ImageServiceTest {
+public class ThumbServiceTest {
 
     private static final String DOT = ".";
     private static final String IMAGES_DIRECTORY = "images/";
@@ -26,11 +27,11 @@ public class ImageServiceTest {
     private static final int MAX_THUMB_WIDTH = 50;
     private static final int MAX_THUMB_HEIGHT = 50;
 
-    private ImageService imageService;
+    private ThumbService thumbService;
 
     @BeforeEach
     public void setUp() {
-        imageService = new ImageService(MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT);
+        thumbService = new ThumbService(new ImageService(), MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT);
     }
 
     @ParameterizedTest
@@ -38,7 +39,7 @@ public class ImageServiceTest {
     public void generatedThumbBytesShouldMatchWithExpectedThumbBytes(final String fileExtension)
             throws WebyException, URISyntaxException, IOException {
         URL inputPath = ClassLoader.getSystemResource(INPUT_PATH + fileExtension);
-        byte[] actualImageArray = imageService.resize(inputPath);
+        byte[] actualImageArray = thumbService.resize(inputPath);
 
         URL expectedUrl = ClassLoader.getSystemResource(OUTPUT_PATH + fileExtension);
         File expectedFile = new File(expectedUrl.toURI());

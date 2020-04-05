@@ -29,14 +29,14 @@ public class CategoryCrawlerService {
     private CategoryScraperService scrapService;
     private HtmlDocumentService documentFromHtml;
     private ArticleRepository articleRepository;
-    private ImageService imageService;
+    private ThumbService thumbService;
 
     @Autowired
-    public CategoryCrawlerService(final ImageService imageService,
+    public CategoryCrawlerService(final ThumbService thumbService,
                                   final CategoryScraperService scrapService,
                                   final HtmlDocumentService documentFromHtml,
                                   final ArticleRepository articleRepository) {
-        this.imageService = imageService;
+        this.thumbService = thumbService;
         this.scrapService = scrapService;
         this.documentFromHtml = documentFromHtml;
         this.articleRepository = articleRepository;
@@ -68,7 +68,7 @@ public class CategoryCrawlerService {
                         } else {
                             article.setThumbUrl(site.getUrl() + BAR_CHARACTER + headLineDto.getThumbUrl());
                         }
-                        article.setThumb(imageService.resize(new URL(headLineDto.getThumbUrl())));
+                        article.setThumb(thumbService.resize(new URL(headLineDto.getThumbUrl())));
                     }
 
                     article.setScrapDate(new Date());

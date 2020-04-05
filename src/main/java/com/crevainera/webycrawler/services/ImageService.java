@@ -22,16 +22,7 @@ import java.util.Iterator;
 @Slf4j
 public class ImageService {
 
-    private Integer maxWidth;
-    private Integer maxHeight;
-
-    public ImageService(@Value("${scraper.thumb.maxWidth}") final Integer maxWidth,
-                        @Value("${scraper.thumb.maxWidth}") final Integer maxHeight) {
-        this.maxWidth = maxWidth;
-        this.maxHeight = maxHeight;
-    }
-
-    public byte[] resize(final URL url) throws WebyException {
+    public byte[] resize(final URL url, final Integer maxWidth, final Integer maxHeight) throws WebyException {
         try {
             BufferedImage img = ImageIO.read(url);
 

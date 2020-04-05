@@ -1,8 +1,10 @@
 package com.crevainera.weby.crawler.constant;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public enum WebyConstant {
 
     DOCUMENT_ERROR_RETRIEVE("Error getting html page from web site"),

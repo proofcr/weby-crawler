@@ -35,8 +35,8 @@ public class CategoryScraperService {
             String article = removeHTMLTags(scrapRule.getHeadline());
             articles = (Elements) new GroovyShell(documentBinding).evaluate(article);
         } catch (Exception e) {
-            log.error(SCRAPER_ERROR_HEADLINE.name(), e.getStackTrace().toString());
-            throw new WebyException(SCRAPER_ERROR_HEADLINE.name());
+            log.error(SCRAPER_ERROR_HEADLINE.name(), e.getStackTrace());
+            throw new WebyException(SCRAPER_ERROR_HEADLINE.getLabel());
         }
 
         List<HeadLineDto> headLineList = new ArrayList<>();
@@ -50,21 +50,21 @@ public class CategoryScraperService {
                 String headlineTitle = (String) new GroovyShell(articleBinding).evaluate(scrapRule.getTitle());
                 headLine.setTitle(removeHTMLTags(headlineTitle));
             } catch (Exception e) {
-                log.error(SCRAPER_ERROR_TITLE.name(), e.getStackTrace().toString());
+                log.error(SCRAPER_ERROR_TITLE.getLabel(), e.getStackTrace());
             }
 
             try  {
                 String headlineLink = (String) new GroovyShell(articleBinding).evaluate(scrapRule.getLink());
                 headLine.setUrl(removeHTMLTags(headlineLink));
             } catch (Exception e) {
-                log.error(SCRAPER_ERROR_LINK.name(), e.getStackTrace().toString());
+                log.error(SCRAPER_ERROR_LINK.getLabel(), e.getStackTrace());
             }
 
             try {
                 String headlineImage = (String) new GroovyShell(articleBinding).evaluate(scrapRule.getImage());
                 headLine.setThumbUrl(removeHTMLTags(headlineImage));
             } catch (Exception e) {
-                log.error(SCRAPER_ERROR_THUMB.name(), e.getStackTrace().toString());
+                log.error(SCRAPER_ERROR_THUMB.getLabel(), e.getStackTrace());
             }
 
             headLineList.add(headLine);

@@ -52,8 +52,8 @@ public class ImageService {
             return out.toByteArray();
 
         } catch (IOException ioException) {
-            log.error(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.name(), ioException.getStackTrace().toString());
-            throw new WebyException(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.name());
+            log.error(ioException.getMessage() + " : " + url);
+            throw new WebyException(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.getLabel());
         }
     }
 

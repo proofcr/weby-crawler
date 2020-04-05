@@ -4,5 +4,10 @@ crawler:
   parallelSites: 1
 
 spring:
+
   profiles:
       include: h2
+
+  logging:
+    level:
+      com.crevainera.weby: DEBUG

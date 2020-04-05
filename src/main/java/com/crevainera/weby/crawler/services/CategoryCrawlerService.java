@@ -23,7 +23,6 @@ import static com.crevainera.weby.crawler.constant.WebyConstant.*;
 @Slf4j
 public class CategoryCrawlerService {
 
-    public static final String BAR_CHARACTER = "/";
     public static final String HTTP_PROTOCOL = "http";
 
     private CategoryScraperService scrapService;
@@ -66,12 +65,12 @@ public class CategoryCrawlerService {
                         if (headLineDto.getThumbUrl().startsWith(HTTP_PROTOCOL)) {
                             article.setThumbUrl(headLineDto.getThumbUrl());
                         } else {
-                            article.setThumbUrl(site.getUrl() + BAR_CHARACTER + headLineDto.getThumbUrl());
+                            article.setThumbUrl(site.getUrl() + headLineDto.getThumbUrl());
                         }
                         try {
-                            article.setThumb(thumbService.resize(new URL(headLineDto.getThumbUrl())));
+                            article.setThumb(thumbService.resize(new URL(article.getThumbUrl())));
                         } catch (MalformedURLException e) {
-                            log.error(MALFORMED_URL.name(), e.getStackTrace().toString());
+                            log.error(MALFORMED_URL.getLabel(), e.getStackTrace());
                         }
                     }
 
@@ -94,7 +93,7 @@ public class CategoryCrawlerService {
             }
 
         } catch (WebyException e) {
-            log.error(String.format(CRAWLER_ERROR.name(), e.getMessage(), category.getUrl()));
+            log.error(String.format(CRAWLER_ERROR.getLabel(), e.getMessage(), category.getUrl()));
         }
     }
 

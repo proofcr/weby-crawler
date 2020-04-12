@@ -1,6 +1,5 @@
-package com.crevainera.weby.crawler;
+package com.crevainera.weby.crawler.services.headline;
 
-import com.crevainera.weby.crawler.services.SiteCrawlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -8,12 +7,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class ScheduledTasks {
+public class HeadlineScheduler {
 
-    private SiteCrawlerService siteCrawlerService;
+    private HeadlineServiceSitePool siteCrawlerService;
 
     @Autowired
-    public ScheduledTasks(SiteCrawlerService siteCrawlerService) {
+    public HeadlineScheduler(HeadlineServiceSitePool siteCrawlerService) {
         this.siteCrawlerService = siteCrawlerService;
     }
 

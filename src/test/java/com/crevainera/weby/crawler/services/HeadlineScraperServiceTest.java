@@ -3,6 +3,7 @@ package com.crevainera.weby.crawler.services;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.dto.HeadLineDto;
 import com.crevainera.weby.crawler.entities.ScrapRule;
+import com.crevainera.weby.crawler.services.headline.HeadlineScraperService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class CategoryScraperServiceTest {
+class HeadlineScraperServiceTest {
 
     public static final String SITE_DIRECTORY = "sites/";
     public static final String SITE_AHORALASFLORES_HTML = SITE_DIRECTORY + "ahoralasflores.html";
@@ -65,11 +66,11 @@ class CategoryScraperServiceTest {
         ScrapRule scrapRule = new ScrapRule();
         scrapRule.setHeadline(headline);
         scrapRule.setTitle(title);
-        scrapRule.setImage(image);
         scrapRule.setLink(link);
-        CategoryScraperService categoryScraperService = new CategoryScraperService();
+        scrapRule.setImage(image);
+        HeadlineScraperService headlineScraperService = new HeadlineScraperService();
 
-        List<HeadLineDto> list = categoryScraperService.scrap(document, scrapRule);
+        List<HeadLineDto> list = headlineScraperService.scrap(document, scrapRule);
 
         assertNotNull(list);
         assertEquals(expectedResultListSize, list.size());

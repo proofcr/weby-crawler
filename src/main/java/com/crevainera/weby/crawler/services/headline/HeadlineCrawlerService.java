@@ -1,4 +1,4 @@
-package com.crevainera.weby.crawler.services;
+package com.crevainera.weby.crawler.services.headline;
 
 import com.crevainera.weby.crawler.dto.HeadLineDto;
 import com.crevainera.weby.crawler.entities.Article;
@@ -7,38 +7,39 @@ import com.crevainera.weby.crawler.entities.ScrapRule;
 import com.crevainera.weby.crawler.entities.Site;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.repositories.ArticleRepository;
+import com.crevainera.weby.crawler.services.HtmlDocumentService;
+import com.crevainera.weby.crawler.services.thumb.ThumbServiceImagePool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 
-import static com.crevainera.weby.crawler.constant.WebyConstant.*;
+import static com.crevainera.weby.crawler.constant.WebyConstant.CRAWLER_ERROR;
 
 @Service
 @Slf4j
-public class CategoryCrawlerService {
+public class HeadlineCrawlerService {
 
     public static final String HTTP_PROTOCOL = "http";
 
-    private CategoryScraperService scrapService;
+    private HeadlineScraperService scrapService;
     private HtmlDocumentService documentFromHtml;
     private ArticleRepository articleRepository;
-    private ThumbService thumbService;
+    private ThumbServiceImagePool thumbServiceImagePool;
 
     @Autowired
-    public CategoryCrawlerService(final ThumbService thumbService,
-                                  final CategoryScraperService scrapService,
+    public HeadlineCrawlerService(final ThumbServiceImagePool thumbServiceImagePool,
+                                  final HeadlineScraperService scrapService,
                                   final HtmlDocumentService documentFromHtml,
                                   final ArticleRepository articleRepository) {
-        this.thumbService = thumbService;
+        this.thumbServiceImagePool = thumbServiceImagePool;
         this.scrapService = scrapService;
         this.documentFromHtml = documentFromHtml;
         this.articleRepository = articleRepository;
+
     }
 
     public void crawlScrapAndSave(final Site site) {
@@ -72,19 +73,16 @@ public class CategoryCrawlerService {
                         } else {
                             article.setThumbUrl(site.getUrl() + headLineDto.getThumbUrl());
                         }
-                        try {
-                            article.setThumb(thumbService.resize(new URL(article.getThumbUrl())));
-                        } catch (MalformedURLException e) {
-                            log.error(MALFORMED_URL.getLabel(), e.getStackTrace());
-                        } catch (WebyException e) {
-                            log.error(String.format(CRAWLER_ERROR.getLabel(), e.getMessage(), category.getUrl()));
-                        }
                     }
 
                     article.setScrapDate(new Date());
                     article.setSiteId(category.getSiteId());
                     article.getLabelList().add(category.getLabel());
                     articleRepository.save(article);
+
+                    if (StringUtils.isNotBlank(article.getThumbUrl())) {
+                        thumbServiceImagePool.put(article);
+                    }
 
                     // TODO news'body scrap
 

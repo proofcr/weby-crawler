@@ -14,6 +14,7 @@ public enum WebyConstant {
     SCRAPER_ERROR_LINK("Error scraping headline's link"),
     SCRAPER_ERROR_THUMB("Error scraping headline's thumb image"),
     IMAGE_SERVICE_IMAGE_NAME("Error resizing image"),
+    NOT_FOUND_URL("Not found URL"),
     MALFORMED_URL("Malformed URL");
 
     private String label;

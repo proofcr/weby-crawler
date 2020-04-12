@@ -1,4 +1,4 @@
-package com.crevainera.weby.crawler.services;
+package com.crevainera.weby.crawler.services.headline;
 
 
 import com.crevainera.weby.crawler.entities.Site;
@@ -11,17 +11,17 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 @Service
-public class SiteCrawlerService {
+public class HeadlineServiceSitePool {
 
     private SiteRepository siteRepository;
-    private CategoryCrawlerService crawlerService;
-    private ExecutorService poolForSites;
+    private HeadlineCrawlerService crawlerService;
+    private ExecutorService headLinesBySitePoolSize;
 
     @Autowired
-    public SiteCrawlerService(final ExecutorService poolForSites,
-                              final SiteRepository siteRepository,
-                              final CategoryCrawlerService crawlerService) {
-        this.poolForSites = poolForSites;
+    public HeadlineServiceSitePool(final ExecutorService headLinesBySitePoolSize,
+                                   final SiteRepository siteRepository,
+                                   final HeadlineCrawlerService crawlerService) {
+        this.headLinesBySitePoolSize = headLinesBySitePoolSize;
         this.siteRepository = siteRepository;
         this.crawlerService = crawlerService;
     }
@@ -30,7 +30,7 @@ public class SiteCrawlerService {
         List<Site> sites =  Lists.newArrayList(siteRepository.findByEnabledTrue());
 
         for (Site site : sites) {
-            poolForSites.submit(() -> crawlerService.crawlScrapAndSave(site));
+            headLinesBySitePoolSize.submit(() -> crawlerService.crawlScrapAndSave(site));
         }
     }
 

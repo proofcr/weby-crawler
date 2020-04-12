@@ -1,4 +1,4 @@
-package com.crevainera.weby.crawler.services;
+package com.crevainera.weby.crawler.services.headline;
 
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.dto.HeadLineDto;
@@ -21,7 +21,7 @@ import static com.crevainera.weby.crawler.constant.WebyConstant.*;
 
 @Service
 @Slf4j
-public class CategoryScraperService {
+public class HeadlineScraperService {
 
     public static final String INPUT_BINDING = "$input";
 

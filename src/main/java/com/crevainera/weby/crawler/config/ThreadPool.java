@@ -10,14 +10,16 @@ import java.util.concurrent.Executors;
 @Configuration
 public class ThreadPool {
 
-    private Integer parallelSites;
+    private Integer headLinesBySitePool;
 
-    public ThreadPool(@Value("${crawler.parallelSites}") final Integer parallelSites) {
-        this.parallelSites = parallelSites;
+
+    public ThreadPool(@Value("${crawler.headLinesBySitePool}") final Integer headLinesBySitePool) {
+        this.headLinesBySitePool = headLinesBySitePool;
     }
 
-    @Bean(name="poolForSites")
-    public ExecutorService poolForSites() {
-        return Executors.newFixedThreadPool(parallelSites);
+    @Bean(name="headLinesBySitePool")
+    public ExecutorService getHeadLinesBySitePool() {
+        return Executors.newFixedThreadPool(headLinesBySitePool);
     }
-}
+
+ }

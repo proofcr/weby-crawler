@@ -2,13 +2,12 @@ package com.crevainera.weby.crawler.services;
 
 import com.crevainera.weby.crawler.constant.WebyConstant;
 import com.crevainera.weby.crawler.exception.WebyException;
-import com.sun.image.codec.jpeg.JPEGCodec;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -16,17 +15,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Iterator;
 
 
 @Service
 @Slf4j
 public class ImageService {
+    public static final String USER_AGENT = "User-Agent";
+    private String browserName;
+
+    public ImageService(@Value("${crawler.browser}") final String browserName) {
+        log.info("Crawler's browser: " + browserName);
+        this.browserName = browserName;
+    }
+
 
     public byte[] resize(final URL url, final Integer maxWidth, final Integer maxHeight) throws WebyException {
         try {
-            InputStream inputStream = url.openConnection().getInputStream();
 
+            InputStream inputStream = getUrlConnection(url).getInputStream();
             BufferedImage img = ImageIO.read(inputStream);
 
             int scaledWidth = 0, scaledHeight = 0;
@@ -49,9 +55,8 @@ public class ImageService {
             BufferedImage buffered = new BufferedImage(scaledWidth, scaledHeight, Image.SCALE_REPLICATE);
             buffered.getGraphics().drawImage(resized, 0, 0 , null);
 
-            String formatName = getImageExtensionFromBytes(url) ;
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ImageIO.write(buffered, formatName, out);
+            ImageIO.write(buffered, FilenameUtils.getExtension(url.toString()), out);
 
             return out.toByteArray();
 
@@ -61,17 +66,14 @@ public class ImageService {
         }
     }
 
-    private String getImageExtensionFromBytes(final URL url) throws IOException {
-        InputStream is = url.openStream();
-        ImageInputStream iis = ImageIO.createImageInputStream(is);
-        Iterator iterator = ImageIO.getImageReaders(iis);
-        if (!iterator.hasNext()) {
-            return null;
-        }
-        ImageReader reader = (ImageReader) iterator.next();
-        is.close();
-        iis.close();
+    private URLConnection getUrlConnection(final URL url) throws WebyException {
+        try {
+            URLConnection urlConnection = url.openConnection();
+            urlConnection.setRequestProperty(USER_AGENT, browserName);
 
-        return reader.getFormatName();
-    }
+            return urlConnection;
+        } catch (IOException e) {
+            throw new WebyException(WebyConstant.NOT_FOUND_URL.getLabel());
+        }
+     }
 }

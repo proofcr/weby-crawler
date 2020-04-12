@@ -1,7 +1,9 @@
 crawler:
   cron:
     expression: '0 */15 * * * *'
-  parallelSites: 1
+  articleIdForThumbQueueSize: 10
+  thumbResizeLoopMillisecondDelay: 500
+  headLinesBySitePool: 1
 
 spring:
 

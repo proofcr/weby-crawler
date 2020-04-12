@@ -3,20 +3,16 @@ package com.crevainera.weby.crawler.services;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.services.thumb.ThumbService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -51,36 +47,5 @@ public class ThumbServiceTest {
         byte[] expectedImageArray = Files.readAllBytes(expectedFile.toPath());
 
         assertTrue(Arrays.equals(expectedImageArray, actualImageArray));
-    }
-
-    @Test
-    public void proofWeb403()
-            throws WebyException, URISyntaxException, IOException {
-        String filePart = "multimedia.normal.a1a9225c53839407.617574655f6e6f726d616c2e6a7067.jpg";
-         URL inputPath = new URL("https://ahoralasflores.com.ar/download/" + filePart);
-
-        byte[] actualImageArray = thumbService.resize(inputPath);
-
-        OutputStream os = new FileOutputStream("c:\\Projects\\proofcris.jpg");
-
-        // Starts writing the bytes in it
-        os.write(actualImageArray);
-
-        assertNotNull(actualImageArray);
-    }
-
-    @Test
-    public void proofWeb200()
-            throws WebyException, URISyntaxException, IOException {
-        URL inputPath = new URL("https://www.noticiaslasflores.com.ar/wp-content/uploads/2020/03/1584487854005.jpg");
-        byte[] actualImageArray = thumbService.resize(inputPath);
-
-
-        OutputStream os = new FileOutputStream("c:\\Projects\\proofcris.jpg");
-
-        // Starts writing the bytes in it
-        os.write(actualImageArray);
-
-        assertNotNull(actualImageArray);
     }
 }

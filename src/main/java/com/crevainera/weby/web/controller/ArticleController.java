@@ -2,9 +2,7 @@ package com.crevainera.weby.web.controller;
 
 import com.crevainera.weby.crawler.entities.Article;
 import com.crevainera.weby.crawler.exception.WebyException;
-import com.crevainera.weby.crawler.repositories.ArticleRepository;
 import com.crevainera.weby.web.service.ArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
 @RequestMapping("article")

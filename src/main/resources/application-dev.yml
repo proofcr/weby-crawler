@@ -8,7 +8,7 @@ crawler:
 spring:
 
   profiles:
-      include: mysql
+      include: h2
 
   logging:
     level:

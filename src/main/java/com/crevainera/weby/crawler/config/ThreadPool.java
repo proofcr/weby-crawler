@@ -10,16 +10,15 @@ import java.util.concurrent.Executors;
 @Configuration
 public class ThreadPool {
 
-    private Integer headLinesBySitePool;
+    private Integer headLinesBySitePoolSize;
 
-
-    public ThreadPool(@Value("${crawler.headLinesBySitePool}") final Integer headLinesBySitePool) {
-        this.headLinesBySitePool = headLinesBySitePool;
+    public ThreadPool(@Value("${crawler.headLinesBySitePoolSize:4}") final Integer headLinesBySitePoolSize) {
+        this.headLinesBySitePoolSize = headLinesBySitePoolSize;
     }
 
     @Bean(name="headLinesBySitePool")
     public ExecutorService getHeadLinesBySitePool() {
-        return Executors.newFixedThreadPool(headLinesBySitePool);
+        return Executors.newFixedThreadPool(headLinesBySitePoolSize);
     }
 
  }

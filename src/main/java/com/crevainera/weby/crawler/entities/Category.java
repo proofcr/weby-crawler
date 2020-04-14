@@ -1,5 +1,6 @@
 package com.crevainera.weby.crawler.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,11 +21,13 @@ public class Category {
     @Column(name = "site_id")
     private long siteId;
 
+    @JsonIgnore
     @ManyToOne(
             fetch = FetchType.EAGER
     )
     private ScrapRule scrapRule;
 
+    @JsonIgnore
     @ManyToOne(
             fetch = FetchType.EAGER
     )

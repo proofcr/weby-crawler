@@ -67,12 +67,6 @@ public class ThumbServiceImagePool {
         }
     }
 
-    @PostConstruct
-    public void onStartup() {
-        initQueues();
-        executeThumbBySite();
-    }
-
     private void executeThumbBySite() { // TODO improve
 
         queueMap.forEach((siteId, queue) -> {
@@ -100,6 +94,12 @@ public class ThumbServiceImagePool {
             }
         );
         log.info("executeThumbBySite");
+    }
+
+    @PostConstruct
+    public void onStartup() {
+        initQueues();
+        executeThumbBySite();
     }
 
 }

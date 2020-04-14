@@ -98,7 +98,7 @@ public class HeadlineCrawlerService {
             }
 
         } catch (WebyException e) {
-            log.error(String.format(CRAWLER_ERROR.getLabel(), e.getMessage(), category.getUrl()));
+            log.error(String.format(CRAWLER_ERROR.getMessage(), e.getMessage(), category.getUrl()));
         }
     }
 

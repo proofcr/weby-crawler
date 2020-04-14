@@ -61,8 +61,8 @@ public class ImageService {
             return out.toByteArray();
 
         } catch (IOException ioException) {
-            log.error(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.getLabel(), ioException.getStackTrace().toString());
-            throw new WebyException(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.getLabel());
+            log.error(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.getMessage(), ioException.getStackTrace().toString());
+            throw new WebyException(WebyConstant.IMAGE_SERVICE_IMAGE_NAME.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class ImageService {
 
             return urlConnection;
         } catch (IOException e) {
-            throw new WebyException(WebyConstant.NOT_FOUND_URL.getLabel());
+            throw new WebyException(WebyConstant.NOT_FOUND_URL.getMessage());
         }
      }
 }

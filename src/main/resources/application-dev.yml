@@ -3,12 +3,12 @@ crawler:
     expression: '0 */15 * * * *'
   articleIdForThumbQueueSize: 10
   thumbResizeLoopMillisecondDelay: 500
-  headLinesBySitePool: 1
+  headLinesBySitePoolSize: 1
 
 spring:
 
   profiles:
-      include: h2
+      include: mysql
 
   logging:
     level:

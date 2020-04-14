@@ -1,5 +1,6 @@
 package com.crevainera.weby.crawler.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,11 +21,16 @@ public class Article {
     private String description;
     private String url;
     private String thumbUrl;
-    @Lob
+
+    @Lob @JsonIgnore
     private byte[] thumb;
+
+    @JsonIgnore
     private String body;
+
     @Column(name = "scrap_date")
     private Date scrapDate;
+
     @Column(name = "site_id")
     private long siteId;
 

@@ -1,4 +1,4 @@
-package com.crevainera.weby.crawler;
+package com.crevainera.weby;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

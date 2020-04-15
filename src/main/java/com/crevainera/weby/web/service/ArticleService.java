@@ -4,10 +4,14 @@ import com.crevainera.weby.crawler.constant.WebyConstant;
 import com.crevainera.weby.crawler.entities.Article;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.repositories.ArticleRepository;
-import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,17 +31,33 @@ public class ArticleService {
         }
     }
 
-    public List<Article> findAll() throws WebyException {
+    public List<Article> findAll(final Integer pageNo, final Integer pageSize, final String sortBy) throws WebyException {
         try {
-            return Lists.newArrayList(articleRepository.findAll());
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+            Slice<Article> pagedResult = articleRepository.findAll(paging);
+
+            if(pagedResult.hasContent()) {
+                return pagedResult.getContent();
+            } else {
+                return new ArrayList<>();
+            }
         } catch (RuntimeException e) {
             throw new WebyException(WebyConstant.ARTICLE_SERVICE_EXCEPTION.getMessage());
         }
     }
 
-    public List<Article> findByLabelId(Long labelId) throws WebyException {
+    public List<Article> findByLabelId(final Long labelId, final Integer pageNo, final Integer pageSize, final String sortBy) throws WebyException {
         try {
-            return Lists.newArrayList(articleRepository.fetchByArticleInnerJoinLabelListId(labelId));
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+            Slice<Article> pagedResult = articleRepository.fetchByArticleInnerJoinLabelListId(labelId, paging);
+
+            if(pagedResult.hasContent()) {
+                return pagedResult.getContent();
+            } else {
+                return new ArrayList<>();
+            }
         } catch (RuntimeException e) {
             throw new WebyException(WebyConstant.ARTICLE_SERVICE_EXCEPTION.getMessage());
         }

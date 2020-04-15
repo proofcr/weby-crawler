@@ -4,10 +4,7 @@ import com.crevainera.weby.crawler.entities.Article;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.web.service.ArticleService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,12 +26,19 @@ public class ArticleController {
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Article> getArticles() throws WebyException {
-        return articleService.findAll();
+    public @ResponseBody List<Article> getArticles(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                   @RequestParam(defaultValue = "10") Integer pageSize,
+                                                   @RequestParam(defaultValue = "id") String sortBy) throws WebyException {
+        return articleService.findAll(pageNo, pageSize, sortBy);
     }
 
     @GetMapping(value = "/label/{id}", produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Article> fetchByArticleInnerJoinLabelLabelId(@PathVariable long id) throws WebyException {
-        return articleService.findByLabelId(id);
+    public @ResponseBody List<Article> findByLabelId(
+            @PathVariable long id,
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "id") String sortBy) throws WebyException {
+
+        return articleService.findByLabelId(id, pageNo, pageSize, sortBy);
     }
 }

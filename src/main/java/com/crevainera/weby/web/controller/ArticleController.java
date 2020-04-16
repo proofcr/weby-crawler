@@ -3,6 +3,7 @@ package com.crevainera.weby.web.controller;
 import com.crevainera.weby.crawler.entities.Article;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.web.service.ArticleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ public class ArticleController {
 
     private ArticleService articleService;
 
+    @Autowired
     public ArticleController(final ArticleService articleService) {
         this.articleService = articleService;
     }

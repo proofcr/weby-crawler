@@ -36,7 +36,7 @@ public class ArticleController {
 
     @GetMapping(value = "/label/{id}", produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Article> findByLabelId(
-            @PathVariable long id,
+            @PathVariable(name = "id", required = true) long id,
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "id") String sortBy) throws WebyException {

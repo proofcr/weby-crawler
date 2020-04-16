@@ -21,7 +21,7 @@ public class ArticleController {
     }
 
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody Article getArticle(@PathVariable long id) throws WebyException {
+    public @ResponseBody Article getArticle(@PathVariable(name = "id", required = true) long id) throws WebyException {
         return articleService.findById(id);
     }
 
@@ -40,5 +40,10 @@ public class ArticleController {
             @RequestParam(defaultValue = "id") String sortBy) throws WebyException {
 
         return articleService.findByLabelId(id, pageNo, pageSize, sortBy);
+    }
+
+    @RequestMapping(value = "/thumb/{id}", method = RequestMethod.GET)
+    public @ResponseBody byte[] getThumb(@PathVariable(name = "id", required = true) long id) throws WebyException {
+        return articleService.findById(id).getThumb();
     }
 }

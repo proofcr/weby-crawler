@@ -47,7 +47,8 @@ public class ArticleService {
         }
     }
 
-    public List<Article> findByLabelId(final Long labelId, final Integer pageNo, final Integer pageSize, final String sortBy) throws WebyException {
+    public List<Article> findByLabelId(final Long labelId, final Integer pageNo, final Integer pageSize,
+                                       final String sortBy) throws WebyException {
         try {
             Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 

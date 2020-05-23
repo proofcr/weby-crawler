@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface ArticleRepository extends CrudRepository<Article, Long> {
     Article findByUrl(String url);
     Slice<Article> findAll(final Pageable pageable);

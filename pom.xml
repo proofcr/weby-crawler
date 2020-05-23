@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.5.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>2.2.0.RELEASE</version>
+		<relativePath/>
 	</parent>
 	<groupId>com.crevainera</groupId>
-	<artifactId>weby-crawlerNoticiasLasFlores</artifactId>
+	<artifactId>weby-crawler</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>weby-crawlerNoticiasLasFlores</name>
+	<name>weby-crawler</name>
 	<description>Weby Crawler</description>
 
 	<properties>
@@ -100,9 +100,9 @@
 			<version>3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sourceforge.htmlunit</groupId>
-			<artifactId>com.springsource.com.gargoylesoftware.htmlunit</artifactId>
-			<version>2.6.0</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -117,19 +117,19 @@
 		</dependency>
 	</dependencies>
 
-	<repositories>
-		<repository>
-			<id>spring-repo</id>
-			<name>Spring Repository</name>
-			<url>https://repo.spring.io/plugins-release/</url>
-		</repository>
-	</repositories>
-
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>8</source>
+					<target>8</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

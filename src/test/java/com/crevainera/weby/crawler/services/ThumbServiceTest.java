@@ -1,7 +1,8 @@
 package com.crevainera.weby.crawler.services;
 
 import com.crevainera.weby.crawler.exception.WebyException;
-import com.crevainera.weby.crawler.services.thumb.ThumbService;
+import com.crevainera.weby.crawler.services.image.ImageProcessorService;
+import com.crevainera.weby.crawler.services.image.ThumbService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -32,7 +33,7 @@ public class ThumbServiceTest {
 
     @BeforeEach
     public void setUp() {
-        thumbService = new ThumbService(new ImageService(BROWSER_NAME), MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT);
+        thumbService = new ThumbService(new ImageProcessorService(BROWSER_NAME), MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT);
     }
 
     @ParameterizedTest

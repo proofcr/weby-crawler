@@ -1,4 +1,4 @@
-package com.crevainera.weby.crawler.services;
+package com.crevainera.weby.crawler.services.image;
 
 import com.crevainera.weby.crawler.constant.WebyConstant;
 import com.crevainera.weby.crawler.exception.WebyException;
@@ -19,15 +19,14 @@ import java.net.URLConnection;
 
 @Service
 @Slf4j
-public class ImageService {
+public class ImageProcessorService {
     public static final String USER_AGENT = "User-Agent";
     private String browserName;
 
-    public ImageService(@Value("${crawler.browser}") final String browserName) {
+    public ImageProcessorService(@Value("${crawler.browser}") final String browserName) {
         log.info("Crawler's browser: " + browserName);
         this.browserName = browserName;
     }
-
 
     public byte[] resize(final URL url, final Integer maxWidth, final Integer maxHeight) throws WebyException {
         try {

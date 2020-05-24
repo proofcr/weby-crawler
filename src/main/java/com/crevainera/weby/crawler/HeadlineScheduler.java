@@ -1,5 +1,6 @@
-package com.crevainera.weby.crawler.services.headline;
+package com.crevainera.weby.crawler;
 
+import com.crevainera.weby.crawler.services.headline.HeadlineServiceSitePool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

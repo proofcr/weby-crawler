@@ -1,8 +1,6 @@
 crawler:
   cron:
     expression: '0 */5 * * * *'
-  articleIdForThumbQueueSize: 1000
-  thumbResizeLoopMillisecondDelay: 200
   headLinesBySitePoolSize: 4
 
 spring:

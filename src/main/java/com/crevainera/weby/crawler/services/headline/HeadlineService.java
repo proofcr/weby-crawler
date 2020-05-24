@@ -8,34 +8,35 @@ import com.crevainera.weby.crawler.entities.Site;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.repositories.ArticleRepository;
 import com.crevainera.weby.crawler.services.HtmlDocumentService;
-import com.crevainera.weby.crawler.services.thumb.ThumbServiceImagePool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+import static com.crevainera.weby.crawler.config.ActiveMQConfiguration.ARTICLE_ID_MESSAGE_QUEUE;
 import static com.crevainera.weby.crawler.constant.WebyConstant.CRAWLER_ERROR;
 
 @Service
 @Slf4j
-public class HeadlineCrawlerService {
+public class HeadlineService {
 
     public static final String HTTP_PROTOCOL = "http";
 
+    private JmsTemplate jmsTemplate;
     private HeadlineScraperService scrapService;
     private HtmlDocumentService documentFromHtml;
     private ArticleRepository articleRepository;
-    private ThumbServiceImagePool thumbServiceImagePool;
 
     @Autowired
-    public HeadlineCrawlerService(final ThumbServiceImagePool thumbServiceImagePool,
-                                  final HeadlineScraperService scrapService,
-                                  final HtmlDocumentService documentFromHtml,
-                                  final ArticleRepository articleRepository) {
-        this.thumbServiceImagePool = thumbServiceImagePool;
+    public HeadlineService(final JmsTemplate jmsTemplate,
+                           final HeadlineScraperService scrapService,
+                           final HtmlDocumentService documentFromHtml,
+                           final ArticleRepository articleRepository) {
+        this.jmsTemplate = jmsTemplate;
         this.scrapService = scrapService;
         this.documentFromHtml = documentFromHtml;
         this.articleRepository = articleRepository;
@@ -81,10 +82,8 @@ public class HeadlineCrawlerService {
                     articleRepository.save(article);
 
                     if (StringUtils.isNotBlank(article.getThumbUrl())) {
-                        thumbServiceImagePool.put(article);
+                        jmsTemplate.convertAndSend(ARTICLE_ID_MESSAGE_QUEUE, article.getId());
                     }
-
-                    // TODO news'body scrap
 
                     log.info(headLineDto.getUrl() + " added");
                 } else if (!articleStored.getLabelList().contains(category.getLabel())) {

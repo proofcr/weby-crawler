@@ -1,6 +1,7 @@
 package com.crevainera.weby.crawler;
 
 import com.crevainera.weby.crawler.services.headline.HeadlineServiceSitePool;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
+@Slf4j
 public class HeadlineScheduler {
 
     private HeadlineServiceSitePool siteCrawlerService;
@@ -24,6 +26,7 @@ public class HeadlineScheduler {
 
     @Scheduled(cron = "${crawler.cron.expression}")
     public void executePeriodically() {
-         siteCrawlerService.executeParallelCrawlersBySite();
+        log.info("executePeriodically");
+        siteCrawlerService.executeParallelCrawlersBySite();
     }
 }

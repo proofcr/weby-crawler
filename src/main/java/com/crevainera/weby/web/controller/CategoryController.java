@@ -4,6 +4,7 @@ import com.crevainera.weby.crawler.entities.Category;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.repositories.CategoryRepository;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
 @RequestMapping("category")
+@Slf4j
 public class CategoryController {
 
     private CategoryRepository categoryRepository;
@@ -28,6 +30,7 @@ public class CategoryController {
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public @ResponseBody
     List<Category> getCategories() throws WebyException {
+        log.info("getCategories");
         return Lists.newArrayList(categoryRepository.findAll());
     }
 }

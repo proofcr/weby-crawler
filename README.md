@@ -28,5 +28,5 @@ Collected news and its labels are stored inside database.
 
 ## Server mode
 - Upload the jar file to the server
-- Run `java -jar ./target/weby-crawlerNoticiasLasFlores-[version].jar`
+- Run `java -jar ./target/weby-crawler-[version].jar`
 

@@ -29,7 +29,7 @@ insert into label(id, title) values(@LABEL_MUNDO_ID, 'Mundo');
 SET @LABEL_ENTREVISTAS_ID = 13;
 insert into label(id, title) values(@LABEL_ENTREVISTAS_ID, 'Entrevista');
 SET @LABEL_CURIOSIDADES_ID = 14;
-insert into label(id, title) values(@LABEL_CURIOSIDADES_ID, 'Entrevista');
+insert into label(id, title) values(@LABEL_CURIOSIDADES_ID, 'Curiosidades');
 
 SET @SCRAP_NLF_LFD_ID = 1;
 insert into scrap_rule(id, headline, title, link, image) values(

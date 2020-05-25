@@ -1,8 +1,10 @@
 package com.crevainera.weby.web.controller;
 
 import com.crevainera.weby.crawler.entities.Category;
+import com.crevainera.weby.crawler.entities.Label;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.repositories.CategoryRepository;
+import com.crevainera.weby.crawler.repositories.LabelRepository;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +18,21 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
-@RequestMapping("category")
+@RequestMapping("labels")
 @Slf4j
-public class CategoryController {
+public class LabelController {
 
-    private CategoryRepository categoryRepository;
+    private LabelRepository labelRepository;
 
     @Autowired
-    public CategoryController(final CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public LabelController(final LabelRepository labelRepository) {
+        this.labelRepository = labelRepository;
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public @ResponseBody
-    List<Category> getCategories() throws WebyException {
-        log.info("getCategories");
-        return Lists.newArrayList(categoryRepository.findAll());
+    List<Label> getLabels() throws WebyException {
+        log.info("getLabels");
+        return Lists.newArrayList(labelRepository.findAll());
     }
 }

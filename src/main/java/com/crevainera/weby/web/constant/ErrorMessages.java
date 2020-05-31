@@ -1,4 +1,4 @@
-package com.crevainera.weby.web.error;
+package com.crevainera.weby.web.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

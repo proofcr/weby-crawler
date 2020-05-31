@@ -2,7 +2,7 @@ package com.crevainera.weby.web.config;
 
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.web.dto.ResponseErrorDTO;
-import com.crevainera.weby.web.error.ErrorMessages;
+import com.crevainera.weby.web.constant.ErrorMessages;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.crevainera.weby.web.error.ErrorMessages.ENDPOINT_INTERNAL_SERVER_ERROR;
+import static com.crevainera.weby.web.constant.ErrorMessages.ENDPOINT_INTERNAL_SERVER_ERROR;
 
 @ControllerAdvice
 @Slf4j

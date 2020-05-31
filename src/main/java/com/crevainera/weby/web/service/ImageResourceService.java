@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-import static com.crevainera.weby.web.error.ErrorMessages.SERVICE_DEFAULT_IMAGE_NOT_FOUND;
+import static com.crevainera.weby.web.constant.ErrorMessages.SERVICE_DEFAULT_IMAGE_NOT_FOUND;
 
 @Service
 @Slf4j

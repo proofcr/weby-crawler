@@ -2,14 +2,22 @@ package com.crevainera.weby.web.controller;
 
 import com.crevainera.weby.crawler.entities.Article;
 import com.crevainera.weby.crawler.exception.WebyException;
+import com.crevainera.weby.web.constant.ImageFormatMediaTypeMap;
 import com.crevainera.weby.web.service.ArticleService;
+import com.crevainera.weby.web.service.ImageResourceService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.crevainera.weby.web.constant.ImageFormatEnum.PNG;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
@@ -18,10 +26,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class ArticleController {
 
     private ArticleService articleService;
+    private ImageResourceService imageResourceService;
 
     @Autowired
-    public ArticleController(final ArticleService articleService) {
+    public ArticleController(final ArticleService articleService, final ImageResourceService imageResourceService) {
         this.articleService = articleService;
+        this.imageResourceService = imageResourceService;
     }
 
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
@@ -49,8 +59,24 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "/thumb/{id}", method = RequestMethod.GET)
-    public @ResponseBody byte[] getThumb(@PathVariable(name = "id", required = true) long id) throws WebyException {
-        log.info("getThumb");
-        return articleService.findById(id).getThumb();
+    public ResponseEntity<byte[]> getThumb(@PathVariable(name = "id", required = true) long id) throws WebyException {
+        log.info("getThumb/" + id);
+        Article article = articleService.findById(id);
+
+        byte[] imageThumb = null;
+        MediaType imageThumbFormat = null;
+        if (article.getThumb() != null) {
+            imageThumbFormat = ImageFormatMediaTypeMap.get(FilenameUtils.getExtension(article.getUrl()));
+            imageThumb = article.getThumb();
+        } else {
+            imageThumbFormat = ImageFormatMediaTypeMap.get(PNG.getName());
+            imageThumb = imageResourceService.getDefaultNewsImage();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(imageThumbFormat);
+
+        return new ResponseEntity<>(imageThumb, headers, HttpStatus.OK);
     }
+
 }

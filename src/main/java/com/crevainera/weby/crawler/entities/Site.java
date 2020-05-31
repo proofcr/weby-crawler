@@ -1,5 +1,6 @@
 package com.crevainera.weby.crawler.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,8 +19,10 @@ public class Site {
     private String title;
     private String description;
     private String url;
+    @JsonIgnore
     private Boolean enabled;
     @Column(name = "scrap_thumb_enabled")
+    @JsonIgnore
     private Boolean scrapThumbEnabled;
 
     @OneToMany(
@@ -28,6 +31,7 @@ public class Site {
             orphanRemoval = true
     )
     @JoinColumn(name = "site_id")
+    @JsonIgnore
     private List<Category> categoryList = new ArrayList<>();
 
     @OneToMany(
@@ -35,5 +39,6 @@ public class Site {
             orphanRemoval = true
     )
     @JoinColumn(name = "site_id")
+    @JsonIgnore
     private List<Article> articleList = new ArrayList<>();
 }

@@ -16,6 +16,9 @@ import java.util.List;
 
 @Service
 public class ArticleService {
+
+    private static final String ID_FIELD = "id";
+
     private ArticleRepository articleRepository;
 
     @Autowired
@@ -23,7 +26,7 @@ public class ArticleService {
         this.articleRepository = articleRepository;
     }
 
-    public Article findById(Long id) throws WebyException {
+    public Article findById(final Long id) throws WebyException {
         try {
             return articleRepository.findById(id).get();
         } catch (RuntimeException e) {
@@ -31,9 +34,9 @@ public class ArticleService {
         }
     }
 
-    public List<Article> findAll(final Integer pageNo, final Integer pageSize, final String sortBy) throws WebyException {
+    public List<Article> findAll(final Integer pageNo, final Integer pageSize) throws WebyException {
         try {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(ID_FIELD).descending());
 
             Slice<Article> pagedResult = articleRepository.findAll(paging);
 
@@ -47,10 +50,10 @@ public class ArticleService {
         }
     }
 
-    public List<Article> findByLabelId(final Long labelId, final Integer pageNo, final Integer pageSize,
-                                       final String sortBy) throws WebyException {
+    public List<Article> findByLabelId(final Long labelId, final Integer pageNo,
+                                       final Integer pageSize) throws WebyException {
         try {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(ID_FIELD).descending());
 
             Slice<Article> pagedResult = articleRepository.fetchByArticleInnerJoinLabelListId(labelId, paging);
 

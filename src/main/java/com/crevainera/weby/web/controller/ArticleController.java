@@ -42,20 +42,18 @@ public class ArticleController {
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Article> getArticles(@RequestParam(defaultValue = "0") Integer pageNo,
-                                                   @RequestParam(defaultValue = "10") Integer pageSize,
-                                                   @RequestParam(defaultValue = "id") String sortBy) throws WebyException {
+                                                   @RequestParam(defaultValue = "10") Integer pageSize) throws WebyException {
         log.info("getArticles");
-        return articleService.findAll(pageNo, pageSize, sortBy);
+        return articleService.findAll(pageNo, pageSize);
     }
 
     @GetMapping(value = "/label/{id}", produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Article> findByLabelId(
             @PathVariable(name = "id", required = true) long id,
             @RequestParam(defaultValue = "0") Integer pageNo,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "id") String sortBy) throws WebyException {
+            @RequestParam(defaultValue = "10") Integer pageSize) throws WebyException {
         log.info("findByLabelId");
-        return articleService.findByLabelId(id, pageNo, pageSize, sortBy);
+        return articleService.findByLabelId(id, pageNo, pageSize);
     }
 
     @RequestMapping(value = "/thumb/{id}", method = RequestMethod.GET)
@@ -63,8 +61,8 @@ public class ArticleController {
         log.info("getThumb/" + id);
         Article article = articleService.findById(id);
 
-        byte[] imageThumb = null;
-        MediaType imageThumbFormat = null;
+        byte[] imageThumb;
+        MediaType imageThumbFormat;
         if (article.getThumb() != null) {
             imageThumbFormat = ImageFormatMediaTypeMap.get(FilenameUtils.getExtension(article.getUrl()));
             imageThumb = article.getThumb();

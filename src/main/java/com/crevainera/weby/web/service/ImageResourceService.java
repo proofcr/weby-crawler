@@ -1,5 +1,7 @@
 package com.crevainera.weby.web.service;
 
+import com.crevainera.weby.crawler.constant.WebyConstant;
+import com.crevainera.weby.crawler.exception.WebyException;
 import com.google.common.io.ByteStreams;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,17 +16,19 @@ import static com.crevainera.weby.web.constant.ErrorMessages.SERVICE_DEFAULT_IMA
 @Slf4j
 public class ImageResourceService {
 
-    @Value("classpath:images/news.png")
     private Resource resourceFile;
 
-    public byte[] getDefaultNewsImage() {
+    public ImageResourceService(@Value("classpath:images/news.png") final Resource resourceFile) {
+        this.resourceFile = resourceFile;
+    }
+
+    public byte[] getDefaultNewsImage() throws WebyException {
         log.debug("getDefaultNewsImage");
         try {
             return ByteStreams.toByteArray(resourceFile.getInputStream());
         } catch (IOException e) {
             log.error(SERVICE_DEFAULT_IMAGE_NOT_FOUND.getMessage(), e.getMessage());
+            throw new WebyException(WebyConstant.ARTICLE_SERVICE_EXCEPTION.getMessage());
         }
-
-        return null;
     }
 }

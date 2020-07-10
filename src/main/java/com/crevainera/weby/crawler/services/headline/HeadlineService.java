@@ -77,7 +77,7 @@ public class HeadlineService {
                     }
 
                     article.setScrapDate(new Date());
-                    article.setSiteId(category.getSiteId());
+                    article.getSite().setId(category.getSiteId());
                     article.getLabelList().add(category.getLabel());
                     articleRepository.save(article);
 

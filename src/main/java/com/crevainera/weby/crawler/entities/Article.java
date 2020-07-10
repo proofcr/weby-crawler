@@ -31,10 +31,12 @@ public class Article {
     @Column(name = "scrap_date")
     private Date scrapDate;
 
-    @Column(name = "site_id")
-    private long siteId;
+    @ManyToOne(
+            fetch = FetchType.EAGER
+    )
+    private Site site;
 
-    @JoinTable(name = "ARTICLE_LABEL",
+    @JoinTable(name = "article_label",
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id")
     )

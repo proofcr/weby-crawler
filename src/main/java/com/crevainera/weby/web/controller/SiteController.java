@@ -1,9 +1,7 @@
 package com.crevainera.weby.web.controller;
 
-import com.crevainera.weby.crawler.entities.Label;
 import com.crevainera.weby.crawler.entities.Site;
 import com.crevainera.weby.crawler.exception.WebyException;
-import com.crevainera.weby.crawler.repositories.LabelRepository;
 import com.crevainera.weby.crawler.repositories.SiteRepository;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;

@@ -1,9 +1,7 @@
 package com.crevainera.weby.web.controller;
 
-import com.crevainera.weby.crawler.entities.Category;
 import com.crevainera.weby.crawler.entities.Label;
 import com.crevainera.weby.crawler.exception.WebyException;
-import com.crevainera.weby.crawler.repositories.CategoryRepository;
 import com.crevainera.weby.crawler.repositories.LabelRepository;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +30,7 @@ public class LabelController {
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public @ResponseBody
     List<Label> getLabels() throws WebyException {
-        log.info("getLabels");
+        log.debug("getLabels");
         return Lists.newArrayList(labelRepository.findAll());
     }
 }

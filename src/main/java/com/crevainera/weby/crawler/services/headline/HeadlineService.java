@@ -7,6 +7,7 @@ import com.crevainera.weby.crawler.entities.ScrapRule;
 import com.crevainera.weby.crawler.entities.Site;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.repositories.ArticleRepository;
+import com.crevainera.weby.crawler.repositories.SiteRepository;
 import com.crevainera.weby.crawler.services.HtmlDocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,16 +31,19 @@ public class HeadlineService {
     private HeadlineScraperService scrapService;
     private HtmlDocumentService documentFromHtml;
     private ArticleRepository articleRepository;
+    private SiteRepository siteRepository;
 
     @Autowired
     public HeadlineService(final JmsTemplate jmsTemplate,
                            final HeadlineScraperService scrapService,
                            final HtmlDocumentService documentFromHtml,
-                           final ArticleRepository articleRepository) {
+                           final ArticleRepository articleRepository,
+                           final SiteRepository siteRepository) {
         this.jmsTemplate = jmsTemplate;
         this.scrapService = scrapService;
         this.documentFromHtml = documentFromHtml;
         this.articleRepository = articleRepository;
+        this.siteRepository = siteRepository;
 
     }
 
@@ -77,7 +81,7 @@ public class HeadlineService {
                     }
 
                     article.setScrapDate(new Date());
-                    article.getSite().setId(category.getSiteId());
+                    article.setSite(site);
                     article.getLabelList().add(category.getLabel());
                     articleRepository.save(article);
 

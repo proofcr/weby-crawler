@@ -31,20 +31,16 @@ public class HeadlineService {
     private HeadlineScraperService scrapService;
     private HtmlDocumentService documentFromHtml;
     private ArticleRepository articleRepository;
-    private SiteRepository siteRepository;
 
     @Autowired
     public HeadlineService(final JmsTemplate jmsTemplate,
                            final HeadlineScraperService scrapService,
                            final HtmlDocumentService documentFromHtml,
-                           final ArticleRepository articleRepository,
-                           final SiteRepository siteRepository) {
+                           final ArticleRepository articleRepository) {
         this.jmsTemplate = jmsTemplate;
         this.scrapService = scrapService;
         this.documentFromHtml = documentFromHtml;
         this.articleRepository = articleRepository;
-        this.siteRepository = siteRepository;
-
     }
 
     public void crawlScrapAndSave(final Site site) {

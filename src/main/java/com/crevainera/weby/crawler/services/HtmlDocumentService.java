@@ -19,7 +19,7 @@ public class HtmlDocumentService {
     private String browserName;
 
     public HtmlDocumentService(@Value("${crawler.browser}") final String browserName) {
-        log.info("Crawler's browser: " + browserName);
+        log.debug("Crawler's browser: " + browserName);
         this.browserName = browserName;
     }
 

@@ -4,6 +4,7 @@ import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.dto.HeadLineDto;
 import com.crevainera.weby.crawler.entities.ScrapRule;
 import com.crevainera.weby.crawler.services.headline.HeadlineScraperService;
+import com.crevainera.weby.crawler.services.headline.HtmlDocumentScraper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -68,7 +69,7 @@ class HeadlineScraperServiceTest {
         scrapRule.setTitle(title);
         scrapRule.setLink(link);
         scrapRule.setImage(image);
-        HeadlineScraperService headlineScraperService = new HeadlineScraperService();
+        HeadlineScraperService headlineScraperService = new HeadlineScraperService(new HtmlDocumentScraper());
 
         List<HeadLineDto> list = headlineScraperService.scrap(document, scrapRule);
 

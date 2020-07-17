@@ -1,79 +1,40 @@
 package com.crevainera.weby.crawler.services.headline;
 
-import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.dto.HeadLineDto;
 import com.crevainera.weby.crawler.entities.ScrapRule;
+import com.crevainera.weby.crawler.exception.WebyException;
 import com.google.common.collect.Lists;
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
-import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.crevainera.weby.crawler.constant.WebyConstant.*;
-
 @Service
 @Slf4j
 public class HeadlineScraperService {
 
-    public static final String INPUT_BINDING = "$input";
+    private HtmlDocumentScraper scraper;
+
+    @Autowired
+    public HeadlineScraperService(final HtmlDocumentScraper scraper) {
+        this.scraper = scraper;
+    }
 
     public  List<HeadLineDto> scrap(final Document document, final ScrapRule scrapRule) throws WebyException {
 
-        final Binding documentBinding = new Binding();
-        documentBinding.setProperty(INPUT_BINDING, document);
-
-        Elements articles;
-        try {
-            String article = removeHTMLTags(scrapRule.getHeadline());
-            articles = (Elements) new GroovyShell(documentBinding).evaluate(article);
-        } catch (Exception e) {
-            log.error(SCRAPER_ERROR_HEADLINE.name(), e.getStackTrace());
-            throw new WebyException(SCRAPER_ERROR_HEADLINE.getMessage());
-        }
-
         List<HeadLineDto> headLineList = new ArrayList<>();
-        for (Element article : articles) {
+        for (Element article : scraper.getArticleElements(document, scrapRule.getHeadline())) {
             HeadLineDto headLine = new HeadLineDto();
-
-            final Binding articleBinding = new Binding();
-            articleBinding.setProperty(INPUT_BINDING, article);
-
-            try {
-                String headlineTitle = (String) new GroovyShell(articleBinding).evaluate(scrapRule.getTitle());
-                headLine.setTitle(removeHTMLTags(headlineTitle));
-            } catch (Exception e) {
-                log.error(SCRAPER_ERROR_TITLE.getMessage(), e.getStackTrace());
-            }
-
-            try  {
-                String headlineLink = (String) new GroovyShell(articleBinding).evaluate(scrapRule.getLink());
-                headLine.setUrl(removeHTMLTags(headlineLink));
-            } catch (Exception e) {
-                log.error(SCRAPER_ERROR_LINK.getMessage(), e.getStackTrace());
-            }
-
-            try {
-                String headlineImage = (String) new GroovyShell(articleBinding).evaluate(scrapRule.getImage());
-                headLine.setThumbUrl(removeHTMLTags(headlineImage));
-            } catch (Exception e) {
-                log.error(SCRAPER_ERROR_THUMB.getMessage(), e.getStackTrace());
-            }
-
+            headLine.setTitle(scraper.getPlainText(article, scrapRule.getTitle()));
+            headLine.setUrl(scraper.getPlainText(article, scrapRule.getLink()));
+            headLine.setThumbUrl(scraper.getPlainText(article, scrapRule.getImage()));
             headLineList.add(headLine);
         }
 
         return Lists.reverse(headLineList);
-     }
-
-     private String removeHTMLTags(final String html) {
-         return Jsoup.clean(html, Whitelist.none());
      }
 }

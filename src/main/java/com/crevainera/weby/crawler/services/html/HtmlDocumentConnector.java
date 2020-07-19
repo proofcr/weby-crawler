@@ -1,4 +1,4 @@
-package com.crevainera.weby.crawler.services;
+package com.crevainera.weby.crawler.services.html;
 
 import com.crevainera.weby.crawler.exception.WebyException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +14,11 @@ import static com.crevainera.weby.crawler.constant.WebyConstant.DOCUMENT_ERROR_R
 
 @Component
 @Slf4j
-public class HtmlDocumentService {
+public class HtmlDocumentConnector {
 
     private String browserName;
 
-    public HtmlDocumentService(@Value("${crawler.browser}") final String browserName) {
+    public HtmlDocumentConnector(@Value("${crawler.browser}") final String browserName) {
         log.debug("Crawler's browser: " + browserName);
         this.browserName = browserName;
     }

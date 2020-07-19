@@ -1,8 +1,6 @@
-package com.crevainera.weby.crawler.services;
+package com.crevainera.weby.crawler.services.image;
 
 import com.crevainera.weby.crawler.exception.WebyException;
-import com.crevainera.weby.crawler.services.image.ImageProcessorService;
-import com.crevainera.weby.crawler.services.image.ThumbService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,7 +14,9 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
+/**
+ * Unit test for {@link ThumbService}
+ */
 public class ThumbServiceTest {
 
     private static final String DOT = ".";

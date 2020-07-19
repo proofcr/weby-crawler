@@ -1,8 +1,9 @@
-package com.crevainera.weby.crawler.services.headline;
+package com.crevainera.weby.crawler.services.scraper;
 
 import com.crevainera.weby.crawler.dto.HeadLineDto;
 import com.crevainera.weby.crawler.entities.ScrapRule;
 import com.crevainera.weby.crawler.exception.WebyException;
+import com.crevainera.weby.crawler.services.scraper.HeadlineHtmlScraper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
@@ -13,18 +14,22 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Creates a {@link HeadLineDto} {@link List} from a {@link Document}
+ */
 @Service
 @Slf4j
-public class HeadlineScraperService {
+public class HeadlineListScraper {
 
-    private HtmlDocumentScraper scraper;
+    private HeadlineHtmlScraper scraper;
 
     @Autowired
-    public HeadlineScraperService(final HtmlDocumentScraper scraper) {
+    public HeadlineListScraper(final HeadlineHtmlScraper scraper) {
         this.scraper = scraper;
     }
 
-    public  List<HeadLineDto> scrap(final Document document, final ScrapRule scrapRule) throws WebyException {
+    public List<HeadLineDto> getHeadLinesFromDocument(final Document document, final ScrapRule scrapRule)
+            throws WebyException {
 
         List<HeadLineDto> headLineList = new ArrayList<>();
         for (Element article : scraper.getArticleElements(document, scrapRule.getHeadline())) {
@@ -36,5 +41,5 @@ public class HeadlineScraperService {
         }
 
         return Lists.reverse(headLineList);
-     }
+    }
 }

@@ -1,4 +1,4 @@
-package com.crevainera.weby.crawler.services.headline;
+package com.crevainera.weby.crawler.services.scraper;
 
 import com.crevainera.weby.crawler.exception.WebyException;
 import groovy.lang.Binding;
@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 
 import static com.crevainera.weby.crawler.constant.WebyConstant.*;
 
+/**
+ * Extracts headline and text parts from a {@link Document} that represent a category HTML page
+ */
 @Service
 @Slf4j
-public class HtmlDocumentScraper {
+public class HeadlineHtmlScraper {
 
     private static final String INPUT_BINDING = "$input";
 

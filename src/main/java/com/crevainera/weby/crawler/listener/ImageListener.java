@@ -19,8 +19,8 @@ public class ImageListener {
 
     @JmsListener(destination = ARTICLE_ID_MESSAGE_QUEUE, containerFactory = "jmsFactory")
     public void receiveMessage(final String articleId) {
-        log.info("Message received article.id(" + articleId + ")");
+        log.debug("Message received article.id(" + articleId + ")");
         imageService.process(Long.valueOf(articleId));
-        log.info("Message processed article.id(" + articleId + ")");
+        log.debug("Message processed article.id(" + articleId + ")");
     }
 }

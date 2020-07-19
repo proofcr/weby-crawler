@@ -24,7 +24,7 @@ public class ImageProcessorService {
     private String browserName;
 
     public ImageProcessorService(@Value("${crawler.browser}") final String browserName) {
-        log.info("Crawler's browser: " + browserName);
+        log.debug("Crawler's browser: " + browserName);
         this.browserName = browserName;
     }
 

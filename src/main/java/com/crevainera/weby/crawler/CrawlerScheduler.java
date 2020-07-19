@@ -1,6 +1,6 @@
 package com.crevainera.weby.crawler;
 
-import com.crevainera.weby.crawler.services.headline.HeadlineServiceSitePool;
+import com.crevainera.weby.crawler.services.crawler.SiteCrawler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,23 +10,24 @@ import javax.annotation.PostConstruct;
 
 @Component
 @Slf4j
-public class HeadlineScheduler {
+public class CrawlerScheduler {
 
-    private HeadlineServiceSitePool siteCrawlerService;
+    private SiteCrawler crawlerSitePool;
 
     @Autowired
-    public HeadlineScheduler(HeadlineServiceSitePool siteCrawlerService) {
-        this.siteCrawlerService = siteCrawlerService;
+    public CrawlerScheduler(SiteCrawler crawlerSitePool) {
+        this.crawlerSitePool = crawlerSitePool;
     }
 
     @PostConstruct
     public void onStartup() {
-        siteCrawlerService.executeParallelCrawlersBySite();
+        crawlerSitePool.crawlSites();
     }
+
 
     @Scheduled(cron = "${crawler.cron.expression}")
     public void executePeriodically() {
         log.info("executePeriodically");
-        siteCrawlerService.executeParallelCrawlersBySite();
+        crawlerSitePool.crawlSites();
     }
 }

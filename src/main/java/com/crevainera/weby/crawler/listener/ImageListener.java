@@ -2,6 +2,7 @@ package com.crevainera.weby.crawler.listener;
 
 import com.crevainera.weby.crawler.services.image.ImageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ public class ImageListener {
 
     private ImageService imageService;
 
+    @Autowired
     public ImageListener(final ImageService imageService) {
         this.imageService = imageService;
     }

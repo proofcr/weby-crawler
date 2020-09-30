@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class HeadlineHtmlScraperTest {
 
-    private static final String SITE_DIRECTORY = "sites/";
+    private static final String SITE_DIRECTORY = "sites/headlines/";
     private static final String SITE_AHORALASFLORES_HTML = SITE_DIRECTORY + "ahoralasflores.html";
     private static final String SITE_NOTICIASLASFLORES_HTML = SITE_DIRECTORY + "noticiaslasflores.html";
     private static final String SITE_PLAY_RADIOS_HTML = SITE_DIRECTORY + "playradios.html";

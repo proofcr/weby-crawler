@@ -3,7 +3,6 @@ package com.crevainera.weby.crawler.services.scraper;
 import com.crevainera.weby.crawler.dto.HeadLineDto;
 import com.crevainera.weby.crawler.entities.ScrapRule;
 import com.crevainera.weby.crawler.exception.WebyException;
-import com.crevainera.weby.crawler.services.scraper.HeadlineHtmlScraper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;

@@ -2,8 +2,6 @@ package com.crevainera.weby.crawler.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 /**
  * Weby BBCode tags

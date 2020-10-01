@@ -1,6 +1,5 @@
 package com.crevainera.weby.crawler.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 

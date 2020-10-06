@@ -28,6 +28,10 @@ public class Article {
     @JsonIgnore
     private String body;
 
+    @JsonIgnore
+    @Column(name = "raw_body")
+    private String rawBody;
+
     @Column(name = "scrap_date")
     private Date scrapDate;
 

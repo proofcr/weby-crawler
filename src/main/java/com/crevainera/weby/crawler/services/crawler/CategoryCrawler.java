@@ -64,6 +64,7 @@ public class CategoryCrawler {
                     article.setScrapDate(new Date());
                     article.setSite(site);
                     article.getLabelList().add(category.getLabel());
+                    articleRepository.save(article);
 
                     if (StringUtils.isNotBlank(article.getThumbUrl())) {
                         jmsTemplate.convertAndSend(ARTICLE_ID_MESSAGE_QUEUE, article.getId());
@@ -71,11 +72,10 @@ public class CategoryCrawler {
 
                 } else if (!article.getLabelList().contains(category.getLabel())) {
                     article.getLabelList().add(category.getLabel());
+                    articleRepository.save(article);
                 } else {
                     break; // database is updated
                 }
-
-                articleRepository.save(article);
             }
 
         } catch (WebyException e) {

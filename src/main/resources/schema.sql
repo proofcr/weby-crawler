@@ -19,6 +19,7 @@ CREATE TABLE article (
   thumb_url VARCHAR(250) DEFAULT NULL,
   thumb MEDIUMBLOB NULL,
   body TEXT DEFAULT NULL,
+  raw_body TEXT DEFAULT NULL,
   scrap_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   site_id INT,
   FOREIGN KEY (site_id) REFERENCES site(id)

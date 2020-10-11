@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS site;
-
 CREATE TABLE site (
   id INT AUTO_INCREMENT  PRIMARY KEY,
   title VARCHAR(250) NOT NULL,
@@ -10,7 +9,6 @@ CREATE TABLE site (
 );
 
 DROP TABLE IF EXISTS article;
-
 CREATE TABLE article (
   id INT AUTO_INCREMENT  PRIMARY KEY,
   title VARCHAR(250) NOT NULL,
@@ -25,11 +23,26 @@ CREATE TABLE article (
   FOREIGN KEY (site_id) REFERENCES site(id)
 );
 
+DROP TABLE IF EXISTS image;
+CREATE TABLE image (
+  id INT AUTO_INCREMENT  PRIMARY KEY,
+  name VARCHAR(250) NOT NULL,
+  description VARCHAR(250) NULL,
+  url VARCHAR(250) NOT NULL,
+  thumb MEDIUMBLOB NULL,
+  image MEDIUMBLOB NULL,
+  scrap_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  article_id INT,
+  FOREIGN KEY (article_id) REFERENCES article(id)
+);
+
+DROP TABLE IF EXISTS label;
 CREATE TABLE label (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(250) NOT NULL
 );
 
+DROP TABLE IF EXISTS article_label;
 CREATE TABLE article_label (
   article_id INT NOT NULL,
   label_id INT NOT NULL,
@@ -38,6 +51,7 @@ CREATE TABLE article_label (
   PRIMARY KEY (article_id, label_id)
 );
 
+DROP TABLE IF EXISTS scrap_rule;
 CREATE TABLE scrap_rule (
   id INT AUTO_INCREMENT  PRIMARY KEY,
   headline VARCHAR(500) NOT NULL,
@@ -47,7 +61,6 @@ CREATE TABLE scrap_rule (
 );
 
 DROP TABLE IF EXISTS category;
-
 CREATE TABLE category (
   id INT AUTO_INCREMENT  PRIMARY KEY,
   title VARCHAR(250) NOT NULL,

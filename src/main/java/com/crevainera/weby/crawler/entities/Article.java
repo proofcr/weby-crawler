@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Getter
@@ -46,4 +44,12 @@ public class Article {
     )
     @ManyToMany(fetch=FetchType.EAGER)
     private Set<Label> labelList = new HashSet<>();
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "article_id")
+    @JsonIgnore
+    private List<Image> imageList = new ArrayList<>();
 }

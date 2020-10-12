@@ -1,5 +1,6 @@
 package com.crevainera.weby.crawler.services.crawler;
 
+import com.crevainera.weby.crawler.entities.Category;
 import com.crevainera.weby.crawler.entities.Site;
 import com.crevainera.weby.crawler.repositories.SiteRepository;
 import com.google.common.collect.Lists;
@@ -32,18 +33,16 @@ public class SiteCrawler {
     public void crawlSites() {
         log.debug("executeParallelCrawlersBySite");
 
-        for (Site site : Lists.newArrayList(siteRepository.findByEnabledTrue())) {
-            headLinesBySitePoolSize.submit(() -> crawlCategories(site));
-        }
+        siteRepository.findByEnabledTrue().forEach(site -> {
+                headLinesBySitePoolSize.submit(() -> crawlSiteCategories(site));
+            });
     }
 
-    public void crawlCategories(final Site site) {
-        log.debug("crawlCategories for site site: " + site.getUrl() + " (" + site.getTitle()+ ")");
+    public void crawlSiteCategories(final Site site) {
+        log.debug("thread for site: " + site.getUrl() + " (" + site.getTitle()+ ")");
 
-        site.getCategoryList().forEach(category -> {
-            if (category.getEnabled()) {
-                categoryCrawler.crawlCategory(site, category);
-            }
-        });
+        site.getCategoryList().stream().filter(Category::getEnabled).forEach(category -> {
+                    categoryCrawler.crawlCategory(site, category);
+                });
     }
 }

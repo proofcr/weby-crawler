@@ -3,7 +3,6 @@ package com.crevainera.weby.crawler.services.crawler;
 import com.crevainera.weby.crawler.entities.Category;
 import com.crevainera.weby.crawler.entities.Site;
 import com.crevainera.weby.crawler.repositories.SiteRepository;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,17 +31,16 @@ public class SiteCrawler {
 
     public void crawlSites() {
         log.debug("executeParallelCrawlersBySite");
-
-        siteRepository.findByEnabledTrue().forEach(site -> {
-                headLinesBySitePoolSize.submit(() -> crawlSiteCategories(site));
-            });
+        siteRepository.findByEnabledTrue().forEach(site -> headLinesBySitePoolSize.submit(crawlSiteCategories(site)));
     }
 
-    public void crawlSiteCategories(final Site site) {
-        log.debug("thread for site: " + site.getUrl() + " (" + site.getTitle()+ ")");
+    private Runnable crawlSiteCategories(final Site site) {
+        return () -> {
+            log.debug("thread for site: " + site.getUrl() + " (" + site.getTitle()+ ")");
 
-        site.getCategoryList().stream().filter(Category::getEnabled).forEach(category -> {
-                    categoryCrawler.crawlCategory(site, category);
+            site.getCategoryList().stream().filter(Category::getEnabled).forEach(category -> {
+                categoryCrawler.crawlCategory(site, category);
                 });
+        };
     }
 }

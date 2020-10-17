@@ -1,13 +1,14 @@
 package com.crevainera.weby.crawler.services.crawler;
 
 import com.crevainera.weby.crawler.entities.Category;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-@Slf4j
+/**
+ * Mix categories per site so category crawler can be called equitably per site
+ */
 public class CategoryMixer {
 
     private static List<Stack<Category>> siteCategoryList;

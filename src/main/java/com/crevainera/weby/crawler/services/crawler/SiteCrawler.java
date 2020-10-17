@@ -6,9 +6,10 @@ import com.crevainera.weby.crawler.repositories.SiteRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -33,16 +34,13 @@ public class SiteCrawler {
         this.categoryCrawler = categoryCrawler;
     }
 
-    @Transactional
     public void crawlSites() {
         log.debug("executeParallelCrawlersBySite");
         siteRepository.findByEnabledTrue().ifPresent(sites -> {
                 sites.forEach(site -> {
-                    try {
-                        headLinesBySitePoolSize.invokeAll(callableTaskBySite(site));
-                    } catch (InterruptedException e) {
-                        log.error("Site's thread pool error");
-                    }
+                    callableTaskBySite(site).forEach(callable -> {
+                        headLinesBySitePoolSize.submit(callable);
+                    });
                 });
             });
         log.debug("all task finished");
@@ -55,7 +53,7 @@ public class SiteCrawler {
             categories.stream().filter(Category::getEnabled).forEach(category -> {
 
                 Callable<String> callable = () -> {
-                    log.debug("crawling site: " + site.getUrl() + " (" + site.getTitle() + ")");
+                    log.debug("crawling site:  " + site.getTitle() + ", category: " + category.getTitle());
                     categoryCrawler.crawlCategory(site, category);
 
                     return OK;

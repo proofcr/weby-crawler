@@ -66,7 +66,7 @@ public class CategoryCrawler {
                     article.getLabelList().add(category.getLabel());
                     articleRepository.save(article);
 
-                    if (StringUtils.isNotBlank(article.getThumbUrl())) {
+                    if (site.getScrapThumbEnabled() && StringUtils.isNotBlank(article.getThumbUrl())) {
                         jmsTemplate.convertAndSend(ARTICLE_ID_MESSAGE_QUEUE, article.getId());
                     }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -35,19 +36,20 @@ public class SiteCrawler {
     }
 
     public void crawlSites() {
-        log.debug("executeParallelCrawlersBySite");
+        log.debug("crawling Sites");
+        SitePool sitePool = new SitePool();
+
         siteRepository.findByEnabledTrue().ifPresent(sites -> {
-                sites.forEach(site -> {
-                    callableTaskBySite(site).forEach(callable -> {
-                        headLinesBySitePoolSize.submit(callable);
-                    });
-                });
+            sites.forEach(site -> {
+                sitePool.addSiteCallables(callableTaskBySite(site));
             });
-        log.debug("all task finished");
+        });
+
+        sitePool.submitAllEquitablyPerSite();
     }
 
-    private List<Callable<String>> callableTaskBySite(final Site site) {
-        List<Callable<String>> callableList = new ArrayList<>();
+    private Stack<Callable<String>> callableTaskBySite(final Site site) {
+        Stack<Callable<String>> callableList = new Stack<>();
 
         Optional.ofNullable(site.getCategoryList()).ifPresent(categories -> {
             categories.stream().filter(Category::getEnabled).forEach(category -> {
@@ -58,10 +60,69 @@ public class SiteCrawler {
 
                     return OK;
                 };
-                callableList.add(callable);
+                callableList.push(callable);
             });
         });
 
         return callableList;
+    }
+
+    private class SitePool {
+        private List<Stack<Callable<String>>> siteCallableList;
+        private int nextIndex;
+
+        public SitePool() {
+            siteCallableList = new ArrayList<>();
+            this.nextIndex = 0;
+            log.debug("SitePool initialized");
+        }
+
+        public int nextIndex() {
+            if (nextIndex < siteCallableList.size()-1) {
+                nextIndex++;
+            } else {
+                nextIndex = 0;
+            }
+
+            return nextIndex;
+        }
+
+        public boolean isEmptyPoolPerCurrentSite() {
+            return siteCallableList.get(getCurrentIndex()).empty();
+        }
+        
+        public Stack<Callable<String>> getCurrentCallableStack() {
+            return siteCallableList.get(getCurrentIndex());
+        }
+
+        public void addSiteCallables(Stack<Callable<String>> siteCallables) {
+            siteCallableList.add(siteCallables);
+
+        }
+
+        public void submitAllEquitablyPerSite() {
+            log.debug("SitePool submitting");
+            while (isPoolEmpty()) {
+                if (!isEmptyPoolPerCurrentSite()) {
+                    headLinesBySitePoolSize.submit(getCurrentCallableStack().pop());
+                }
+                nextIndex();
+            }
+            log.debug("SitePool submitted");
+        }
+
+        private int getCurrentIndex() {
+            return nextIndex;
+        }
+
+        private boolean isPoolEmpty() {
+            boolean isEmptyList = false;
+            for (int i=0 ; i < this.siteCallableList.size(); i++) {
+                if (!this.siteCallableList.get(i).empty()) {
+                    isEmptyList = true;
+                }
+            }
+            return isEmptyList;
+        }
     }
 }

@@ -77,24 +77,6 @@ public class SiteCrawler {
             log.debug("SitePool initialized");
         }
 
-        public int nextIndex() {
-            if (nextIndex < siteCallableList.size()-1) {
-                nextIndex++;
-            } else {
-                nextIndex = 0;
-            }
-
-            return nextIndex;
-        }
-
-        public boolean isEmptyPoolPerCurrentSite() {
-            return siteCallableList.get(getCurrentIndex()).empty();
-        }
-        
-        public Stack<Callable<String>> getCurrentCallableStack() {
-            return siteCallableList.get(getCurrentIndex());
-        }
-
         public void addSiteCallables(Stack<Callable<String>> siteCallables) {
             siteCallableList.add(siteCallables);
 
@@ -109,6 +91,24 @@ public class SiteCrawler {
                 nextIndex();
             }
             log.debug("SitePool submitted");
+        }
+
+        private int nextIndex() {
+            if (nextIndex < siteCallableList.size()-1) {
+                nextIndex++;
+            } else {
+                nextIndex = 0;
+            }
+
+            return nextIndex;
+        }
+
+        private boolean isEmptyPoolPerCurrentSite() {
+            return siteCallableList.get(getCurrentIndex()).empty();
+        }
+        
+        private Stack<Callable<String>> getCurrentCallableStack() {
+            return siteCallableList.get(getCurrentIndex());
         }
 
         private int getCurrentIndex() {

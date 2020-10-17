@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Stack;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Crawl configured sites and its categories
@@ -19,48 +19,47 @@ import java.util.concurrent.Callable;
 public class SiteCrawler {
 
     public static final String OK = "OK";
-
-    private CategoryCrawlerExecutor categoryCrawlerExecutor;
     private SiteRepository siteRepository;
+    private ExecutorService headLinesBySitePoolSize;
     private CategoryCrawler categoryCrawler;
 
     @Autowired
-    public SiteCrawler(final CategoryCrawlerExecutor categoryCrawlerExecutor,
-                       final SiteRepository siteRepository,
+    public SiteCrawler(final SiteRepository siteRepository,
+                       final ExecutorService headLinesBySitePoolSize,
                        final CategoryCrawler categoryCrawler) {
-        this.categoryCrawlerExecutor = categoryCrawlerExecutor;
         this.siteRepository = siteRepository;
+        this.headLinesBySitePoolSize = headLinesBySitePoolSize;
         this.categoryCrawler = categoryCrawler;
     }
 
     public void crawlSites() {
         log.debug("crawling Sites");
 
-        siteRepository.findByEnabledTrue().ifPresent(sites -> {
-            sites.forEach(site -> {
-                categoryCrawlerExecutor.addSiteCallables(callableCategoryCrawlerBySite(site));
-            });
-        });
+        List<Site> siteList = siteRepository.findByEnabledTrue();
 
-        categoryCrawlerExecutor.executeAllEquitablyPerSite();
+        getMixedCategoriesPerSite(siteList).forEach(category -> {
+                Site site = siteList.stream().filter(s -> s.getId() == category.getSiteId()).findAny().get();
+                headLinesBySitePoolSize.submit(callableCategoryCrawler(site, category));
+            });
     }
 
-    private Stack<Callable<String>> callableCategoryCrawlerBySite(final Site site) {
-        Stack<Callable<String>> callableList = new Stack<>();
+    private List<Category> getMixedCategoriesPerSite(List<Site> siteList) {
+        CategoryMixer categoryMixer = new CategoryMixer();
 
-        Optional.ofNullable(site.getCategoryList()).ifPresent(categories -> {
-            categories.stream().filter(Category::getEnabled).forEach(category -> {
+        siteList.forEach(site -> categoryMixer.addSiteCategories(site.getCategoryList()));
 
-                Callable<String> callable = () -> {
-                    log.debug("crawling site:  " + site.getTitle() + ", category: " + category.getTitle());
-                    categoryCrawler.crawlCategory(site, category);
+        return categoryMixer.getCategoriesMixedEquitablyPerSite();
+    }
 
-                    return OK;
-                };
-                callableList.push(callable);
-            });
-        });
+    private Callable<String> callableCategoryCrawler(final Site site, final Category category) {
 
-        return callableList;
+        Callable<String> callable = () -> {
+            log.debug("crawling site:  " + site.getTitle() + ", category: " + category.getTitle());
+            categoryCrawler.crawlCategory(site, category);
+
+            return OK;
+        };
+
+        return callable;
     }
 }

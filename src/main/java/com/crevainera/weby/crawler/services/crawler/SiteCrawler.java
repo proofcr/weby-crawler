@@ -7,12 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Crawl configured sites and its categories
@@ -23,15 +20,15 @@ public class SiteCrawler {
 
     public static final String OK = "OK";
 
-    private SitePool sitePool;
+    private CategoryCrawlerExecutor categoryCrawlerExecutor;
     private SiteRepository siteRepository;
     private CategoryCrawler categoryCrawler;
 
     @Autowired
-    public SiteCrawler(final SitePool sitePool,
+    public SiteCrawler(final CategoryCrawlerExecutor categoryCrawlerExecutor,
                        final SiteRepository siteRepository,
                        final CategoryCrawler categoryCrawler) {
-        this.sitePool = sitePool;
+        this.categoryCrawlerExecutor = categoryCrawlerExecutor;
         this.siteRepository = siteRepository;
         this.categoryCrawler = categoryCrawler;
     }
@@ -41,14 +38,14 @@ public class SiteCrawler {
 
         siteRepository.findByEnabledTrue().ifPresent(sites -> {
             sites.forEach(site -> {
-                sitePool.addSiteCallables(callableTaskBySite(site));
+                categoryCrawlerExecutor.addSiteCallables(callableCategoryCrawlerBySite(site));
             });
         });
 
-        sitePool.submitAllEquitablyPerSite();
+        categoryCrawlerExecutor.executeAllEquitablyPerSite();
     }
 
-    private Stack<Callable<String>> callableTaskBySite(final Site site) {
+    private Stack<Callable<String>> callableCategoryCrawlerBySite(final Site site) {
         Stack<Callable<String>> callableList = new Stack<>();
 
         Optional.ofNullable(site.getCategoryList()).ifPresent(categories -> {

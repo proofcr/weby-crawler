@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 
 @Component
 @Slf4j
-public class SitePool {
+public class CategoryCrawlerExecutor {
 
     private ExecutorService headLinesBySitePoolSize;
 
@@ -21,7 +21,7 @@ public class SitePool {
     private int nextIndex;
 
     @Autowired
-    public SitePool(final ExecutorService headLinesBySitePoolSize) {
+    public CategoryCrawlerExecutor(final ExecutorService headLinesBySitePoolSize) {
         this.headLinesBySitePoolSize = headLinesBySitePoolSize;
 
         log.debug("SitePool constructor injection");
@@ -38,8 +38,7 @@ public class SitePool {
         siteCallableList.add(siteCallables);
 
     }
-
-    public void submitAllEquitablyPerSite() {
+    public void executeAllEquitablyPerSite() {
         log.debug("SitePool submitting");
         while (isPoolEmpty()) {
             if (!isEmptyPoolPerCurrentSite()) {

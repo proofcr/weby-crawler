@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -16,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 @Slf4j
 public class SiteCrawler {
 
+    public static final String OK = "OK";
     private SiteRepository siteRepository;
     private ExecutorService headLinesBySitePoolSize;
     private CategoryCrawler categoryCrawler;
@@ -31,16 +34,34 @@ public class SiteCrawler {
 
     public void crawlSites() {
         log.debug("executeParallelCrawlersBySite");
-        siteRepository.findByEnabledTrue().forEach(site -> headLinesBySitePoolSize.submit(crawlSiteCategories(site)));
+        siteRepository.findByEnabledTrue().ifPresent(sites -> {
+                sites.forEach(site -> {
+                    try {
+                        headLinesBySitePoolSize.invokeAll(callableTaskBySite(site));
+                    } catch (InterruptedException e) {
+                        log.error("Site's thread pool error");
+                    }
+                });
+            });
+        log.debug("all task finished");
     }
 
-    private Runnable crawlSiteCategories(final Site site) {
-        return () -> {
-            log.debug("thread for site: " + site.getUrl() + " (" + site.getTitle()+ ")");
+    private List<Callable<String>> callableTaskBySite(final Site site) {
+        List<Callable<String>> callableList = new ArrayList<>();
 
-            site.getCategoryList().stream().filter(Category::getEnabled).forEach(category -> {
-                categoryCrawler.crawlCategory(site, category);
-                });
-        };
+        Optional.ofNullable(site.getCategoryList()).ifPresent(categories -> {
+            categories.stream().filter(Category::getEnabled).forEach(category -> {
+
+                Callable<String> callable = () -> {
+                    log.debug("crawling site: " + site.getUrl() + " (" + site.getTitle() + ")");
+                    categoryCrawler.crawlCategory(site, category);
+
+                    return OK;
+                };
+                callableList.add(callable);
+            });
+        });
+
+        return callableList;
     }
 }

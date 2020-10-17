@@ -45,11 +45,11 @@ public class Article {
     @ManyToMany(fetch=FetchType.EAGER)
     private Set<Label> labelList = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     @JoinColumn(name = "article_id")
-    @JsonIgnore
-    private List<Image> imageList = new ArrayList<>();
+    private Set<Image> imageList = new HashSet<>();
 }

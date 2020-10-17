@@ -7,7 +7,7 @@ This crawler collects news periodically from multiples sources.
 * You can configure scrap rules by site's categories.
 * You can assign labels to site's categories
 
-Collected news and its labels are stored inside database.
+Collected news and its labels were store inside database.
 
 ## Profiles
 

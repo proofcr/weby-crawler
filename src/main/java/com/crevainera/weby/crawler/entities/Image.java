@@ -29,8 +29,9 @@ public class Image {
     @Column(name = "scrap_date")
     private Date scrapDate;
 
-    @Column(name = "article_id")
-    private long articleId;
-
-
+    @JsonIgnore
+    @ManyToOne(
+            fetch = FetchType.EAGER
+    )
+    private Article article;
 }

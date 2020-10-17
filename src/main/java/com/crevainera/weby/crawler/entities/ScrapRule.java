@@ -10,7 +10,6 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
-@Table
 public class ScrapRule {
 
     @Id

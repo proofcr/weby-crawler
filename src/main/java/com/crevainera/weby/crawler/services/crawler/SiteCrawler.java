@@ -22,22 +22,22 @@ import java.util.concurrent.ExecutorService;
 public class SiteCrawler {
 
     public static final String OK = "OK";
+
+    private SitePool sitePool;
     private SiteRepository siteRepository;
-    private ExecutorService headLinesBySitePoolSize;
     private CategoryCrawler categoryCrawler;
 
     @Autowired
-    public SiteCrawler(final SiteRepository siteRepository,
-                       final ExecutorService headLinesBySitePoolSize,
+    public SiteCrawler(final SitePool sitePool,
+                       final SiteRepository siteRepository,
                        final CategoryCrawler categoryCrawler) {
+        this.sitePool = sitePool;
         this.siteRepository = siteRepository;
-        this.headLinesBySitePoolSize = headLinesBySitePoolSize;
         this.categoryCrawler = categoryCrawler;
     }
 
     public void crawlSites() {
         log.debug("crawling Sites");
-        SitePool sitePool = new SitePool();
 
         siteRepository.findByEnabledTrue().ifPresent(sites -> {
             sites.forEach(site -> {
@@ -65,64 +65,5 @@ public class SiteCrawler {
         });
 
         return callableList;
-    }
-
-    private class SitePool {
-        private List<Stack<Callable<String>>> siteCallableList;
-        private int nextIndex;
-
-        public SitePool() {
-            siteCallableList = new ArrayList<>();
-            this.nextIndex = 0;
-            log.debug("SitePool initialized");
-        }
-
-        public void addSiteCallables(Stack<Callable<String>> siteCallables) {
-            siteCallableList.add(siteCallables);
-
-        }
-
-        public void submitAllEquitablyPerSite() {
-            log.debug("SitePool submitting");
-            while (isPoolEmpty()) {
-                if (!isEmptyPoolPerCurrentSite()) {
-                    headLinesBySitePoolSize.submit(getCurrentCallableStack().pop());
-                }
-                nextIndex();
-            }
-            log.debug("SitePool submitted");
-        }
-
-        private int nextIndex() {
-            if (nextIndex < siteCallableList.size()-1) {
-                nextIndex++;
-            } else {
-                nextIndex = 0;
-            }
-
-            return nextIndex;
-        }
-
-        private boolean isEmptyPoolPerCurrentSite() {
-            return siteCallableList.get(getCurrentIndex()).empty();
-        }
-        
-        private Stack<Callable<String>> getCurrentCallableStack() {
-            return siteCallableList.get(getCurrentIndex());
-        }
-
-        private int getCurrentIndex() {
-            return nextIndex;
-        }
-
-        private boolean isPoolEmpty() {
-            boolean isEmptyList = false;
-            for (int i=0 ; i < this.siteCallableList.size(); i++) {
-                if (!this.siteCallableList.get(i).empty()) {
-                    isEmptyList = true;
-                }
-            }
-            return isEmptyList;
-        }
     }
 }

@@ -1,6 +1,7 @@
-package com.crevainera.weby.crawler.services.crawler;
+package com.crevainera.weby.crawler.util;
 
 import com.crevainera.weby.crawler.entities.Category;
+import com.crevainera.weby.crawler.entities.Site;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,21 +12,19 @@ import java.util.Stack;
  */
 public class CategoryMixer {
 
-    private static List<Stack<Category>> siteCategoryList;
-    private static int nextIndex;
+    private List<Stack<Category>> siteCategoryList;
+    private List<Site> siteList;
+    private int nextIndex;
 
-    public CategoryMixer() {
+    public CategoryMixer(final List<Site> siteList) {
+        this.siteList = siteList;
         siteCategoryList = new ArrayList<>();
         nextIndex = 0;
     }
 
-    public void addSiteCategories(final List<Category> categoryList) {
-        Stack<Category> categoryStack = new Stack<>();
-        categoryStack.addAll(categoryList);
-        siteCategoryList.add(categoryStack);
-    }
-
     public List<Category> getCategoriesMixedEquitablyPerSite() {
+        siteList.forEach(site -> addSiteCategories(site.getCategoryList()));
+
         List<Category> categoryMixedList = new ArrayList<>();
         while (isPoolEmpty()) {
             if (!isEmptyPoolPerCurrentSite()) {
@@ -36,6 +35,11 @@ public class CategoryMixer {
         return categoryMixedList;
     }
 
+    private void addSiteCategories(final List<Category> categoryList) {
+        Stack<Category> categoryStack = new Stack<>();
+        categoryStack.addAll(categoryList);
+        siteCategoryList.add(categoryStack);
+    }
 
     private int nextIndex() {
         if (nextIndex < siteCategoryList.size()-1) {

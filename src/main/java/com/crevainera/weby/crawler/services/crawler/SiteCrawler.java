@@ -3,6 +3,7 @@ package com.crevainera.weby.crawler.services.crawler;
 import com.crevainera.weby.crawler.entities.Category;
 import com.crevainera.weby.crawler.entities.Site;
 import com.crevainera.weby.crawler.repositories.SiteRepository;
+import com.crevainera.weby.crawler.util.CategoryMixer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,18 +38,12 @@ public class SiteCrawler {
 
         List<Site> siteList = siteRepository.findByEnabledTrue();
 
-        getMixedCategoriesPerSite(siteList).forEach(category -> {
+        CategoryMixer categoryMixer = new CategoryMixer(siteRepository.findByEnabledTrue());
+
+        categoryMixer.getCategoriesMixedEquitablyPerSite().forEach(category -> {
                 Site site = siteList.stream().filter(s -> s.getId() == category.getSiteId()).findAny().get();
                 headLinesBySitePoolSize.submit(callableCategoryCrawler(site, category));
             });
-    }
-
-    private List<Category> getMixedCategoriesPerSite(List<Site> siteList) {
-        CategoryMixer categoryMixer = new CategoryMixer();
-
-        siteList.forEach(site -> categoryMixer.addSiteCategories(site.getCategoryList()));
-
-        return categoryMixer.getCategoriesMixedEquitablyPerSite();
     }
 
     private Callable<String> callableCategoryCrawler(final Site site, final Category category) {

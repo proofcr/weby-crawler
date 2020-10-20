@@ -38,9 +38,7 @@ public class SiteCrawler {
 
         List<Site> siteList = siteRepository.findByEnabledTrue();
 
-        CategoryMixer categoryMixer = new CategoryMixer(siteList);
-
-        categoryMixer.getCategoriesMixedEquitablyPerSite().forEach(category -> {
+        new CategoryMixer(siteList).getCategoriesMixedEquitablyPerSite().forEach(category -> {
                 Site site = siteList.stream().filter(s -> s.getId() == category.getSiteId()).findAny().get();
                 headLinesBySitePoolSize.submit(callableCategoryCrawler(site, category));
             });

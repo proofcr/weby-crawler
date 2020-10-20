@@ -13,25 +13,29 @@ import java.util.Stack;
 public class CategoryMixer {
 
     private List<Stack<Category>> siteCategoryList;
+    private List<Category> categoryMixedList;
     private List<Site> siteList;
     private int nextIndex;
 
     public CategoryMixer(final List<Site> siteList) {
         this.siteList = siteList;
         siteCategoryList = new ArrayList<>();
+        categoryMixedList = new ArrayList<>();
         nextIndex = 0;
     }
 
     public List<Category> getCategoriesMixedEquitablyPerSite() {
-        siteList.forEach(site -> addSiteCategories(site.getCategoryList()));
+        if (categoryMixedList.isEmpty()) {
+            siteList.forEach(site -> addSiteCategories(site.getCategoryList()));
 
-        List<Category> categoryMixedList = new ArrayList<>();
-        while (isPoolEmpty()) {
-            if (!isEmptyPoolPerCurrentSite()) {
-                categoryMixedList.add(getCurrentCallableStack().pop());
+            while (isPoolEmpty()) {
+                if (!isEmptyPoolPerCurrentSite()) {
+                    categoryMixedList.add(getCurrentCallableStack().pop());
+                }
+                nextIndex();
             }
-            nextIndex();
         }
+
         return categoryMixedList;
     }
 

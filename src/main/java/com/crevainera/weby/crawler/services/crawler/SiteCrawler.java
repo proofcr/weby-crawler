@@ -3,7 +3,7 @@ package com.crevainera.weby.crawler.services.crawler;
 import com.crevainera.weby.crawler.entities.Category;
 import com.crevainera.weby.crawler.entities.Site;
 import com.crevainera.weby.crawler.repositories.SiteRepository;
-import com.crevainera.weby.crawler.util.CategoryIntermixer;
+import com.crevainera.weby.crawler.util.CategoryIntermixerHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class SiteCrawler {
         List<Category> categoryList = siteList.stream().map(s -> s.getCategoryList())
                 .flatMap(List::stream).collect(Collectors.toList());
 
-        CategoryIntermixer.getCategoriesIntermingledPerSite(categoryList).forEach(category -> {
+        CategoryIntermixerHelper.getCategoriesIntermingledPerSite(categoryList).forEach(category -> {
                 Site site = siteList.stream().filter(s -> s.getId() == category.getSiteId()).findAny().get();
                 headLinesBySitePoolSize.submit(callableCategoryCrawler(site, category));
             });

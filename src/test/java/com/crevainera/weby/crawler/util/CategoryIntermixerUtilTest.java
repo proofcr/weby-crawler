@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Unit test for {@link CategoryIntermixerHelper}
+ * Unit test for {@link CategoryIntermixerUtil}
  */
-class CategoryIntermixerHelperTest {
+class CategoryIntermixerUtilTest {
 
     @Test
     void whenMixCategoryListIsProvidedShouldGetCategoriesIntermingledPerSite() {
@@ -26,7 +26,7 @@ class CategoryIntermixerHelperTest {
         categoryList.add(getCategoryStub(9));
         categoryList.add(getCategoryStub(4));
 
-        List<Category> categoryResults = CategoryIntermixerHelper.getCategoriesIntermingledPerSite(categoryList);
+        List<Category> categoryResults = CategoryIntermixerUtil.getCategoriesIntermingledPerSite(categoryList);
 
         assertNotNull(categoryResults);
         assertEquals(8, categoryList.size());

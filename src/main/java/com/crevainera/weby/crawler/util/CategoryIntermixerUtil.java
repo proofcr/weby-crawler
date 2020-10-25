@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 /**
  * Categories intermixer per site
  */
-public class CategoryIntermixerHelper {
+public class CategoryIntermixerUtil {
 
-    private CategoryIntermixerHelper() {
+    private CategoryIntermixerUtil() {
     }
 
     /**
@@ -29,7 +29,7 @@ public class CategoryIntermixerHelper {
 
         int[] counters = new int[siteIdkeys.length];
         for (int i = 0; i < counters.length; i++) {
-            counters[i] =0;
+            counters[i] = 0;
         }
 
         List<Category> intermixerCategories = new ArrayList<>();

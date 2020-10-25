@@ -1,6 +1,6 @@
 package com.crevainera.weby.crawler;
 
-import com.crevainera.weby.crawler.services.crawler.SiteCrawler;
+import com.crevainera.weby.crawler.services.crawler.SiteCategoryCrawler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,10 +12,10 @@ import javax.annotation.PostConstruct;
 @Slf4j
 public class CrawlerScheduler {
 
-    private SiteCrawler crawlerSitePool;
+    private SiteCategoryCrawler crawlerSitePool;
 
     @Autowired
-    public CrawlerScheduler(SiteCrawler crawlerSitePool) {
+    public CrawlerScheduler(final SiteCategoryCrawler crawlerSitePool) {
         this.crawlerSitePool = crawlerSitePool;
     }
 

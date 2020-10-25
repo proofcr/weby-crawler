@@ -31,7 +31,7 @@ import static com.crevainera.weby.crawler.constant.WebyConstant.CRAWLER_ERROR;
  */
 @Service
 @Slf4j
-public class CategoryCrawler {
+public class CategoryArticleCrawler {
 
     public static final String HTTP_PROTOCOL = "http";
 
@@ -41,10 +41,10 @@ public class CategoryCrawler {
     private HeadlineListScraper headlineListScraper;
 
     @Autowired
-    public CategoryCrawler(final JmsTemplate jmsTemplate,
-                           final HtmlDocumentConnector documentFromHtml,
-                           final ArticleRepository articleRepository,
-                           final HeadlineListScraper headlineListScraper) {
+    public CategoryArticleCrawler(final JmsTemplate jmsTemplate,
+                                  final HtmlDocumentConnector documentFromHtml,
+                                  final ArticleRepository articleRepository,
+                                  final HeadlineListScraper headlineListScraper) {
         this.jmsTemplate = jmsTemplate;
         this.documentFromHtml = documentFromHtml;
         this.articleRepository = articleRepository;
@@ -100,7 +100,7 @@ public class CategoryCrawler {
         Article article = new Article();
         article.setTitle(headLineDto.getTitle());
         article.setUrl(headLineDto.getUrl());
-        article.setThumbUrl(getFullThumbUrl(site, headLineDto.getThumbUrl()));
+        getFullThumbUrl(site, headLineDto.getThumbUrl()).ifPresent(article::setThumbUrl);
         article.setScrapDate(new Date());
         article.setSite(site);
 
@@ -112,16 +112,15 @@ public class CategoryCrawler {
         }
     }
 
-    private String getFullThumbUrl(final Site site, final String url) {
-        String fullUrl = StringUtils.EMPTY;
+    private Optional<String> getFullThumbUrl(final Site site, final String url) {
         if (site.getScrapThumbEnabled() && (StringUtils.isNotBlank(url))) {
             if (url.startsWith(HTTP_PROTOCOL)) {
-                fullUrl = url;
+                return Optional.of(url);
             } else {
-                fullUrl = site.getUrl() + url;
+                return Optional.of(site.getUrl() + url);
             }
         }
 
-        return fullUrl;
+        return Optional.empty();
     }
 }

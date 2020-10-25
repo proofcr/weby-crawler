@@ -11,6 +11,8 @@ import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static com.crevainera.weby.crawler.constant.WebyConstant.*;
 
 /**
@@ -22,7 +24,7 @@ public class HeadlineHtmlScraper {
 
     private static final String INPUT_BINDING = "$input";
 
-    public Elements getArticleElements(final Document document, final String scriptText) throws WebyException {
+    public Elements getHeadLineElements(final Document document, final String scriptText) throws WebyException {
        try {
         return (Elements) createGroovyShell(document).evaluate(scriptText);
         } catch (Exception e) {
@@ -31,18 +33,20 @@ public class HeadlineHtmlScraper {
         }
     }
 
-    public String getPlainText(final Element article, final String scriptText) {
+    public Optional<String> getPlainText(final Element article, final String scriptText) {
         try {
-            return removeHTMLTags((String) createGroovyShell(article).evaluate(scriptText));
+            String scrapedText = (String) createGroovyShell(article).evaluate(scriptText);
+            return Optional.ofNullable(removeHTMLTags(scrapedText));
         } catch (Exception e) {
             log.error(String.format(SCRAPER_ARTICLE_PART_ERROR.name(), scriptText));
         }
-        return null;
+        return Optional.empty();
     }
 
     private GroovyShell createGroovyShell(final Object document) {
         final Binding documentBinding = new Binding();
         documentBinding.setProperty(INPUT_BINDING, document);
+
         return new GroovyShell(documentBinding);
     }
 

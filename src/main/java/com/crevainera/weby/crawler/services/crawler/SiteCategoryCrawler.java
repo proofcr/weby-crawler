@@ -18,20 +18,20 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class SiteCrawler {
+public class SiteCategoryCrawler {
 
     public static final String OK = "OK";
     private SiteRepository siteRepository;
     private ExecutorService headLinesBySitePoolSize;
-    private CategoryCrawler categoryCrawler;
+    private CategoryArticleCrawler categoryArticleCrawler;
 
     @Autowired
-    public SiteCrawler(final SiteRepository siteRepository,
-                       final ExecutorService headLinesBySitePoolSize,
-                       final CategoryCrawler categoryCrawler) {
+    public SiteCategoryCrawler(final SiteRepository siteRepository,
+                               final ExecutorService headLinesBySitePoolSize,
+                               final CategoryArticleCrawler categoryArticleCrawler) {
         this.siteRepository = siteRepository;
         this.headLinesBySitePoolSize = headLinesBySitePoolSize;
-        this.categoryCrawler = categoryCrawler;
+        this.categoryArticleCrawler = categoryArticleCrawler;
     }
 
     public void crawlSites() {
@@ -52,7 +52,7 @@ public class SiteCrawler {
 
         Callable<String> callable = () -> {
             log.debug("crawling site:  " + site.getTitle() + ", category: " + category.getTitle());
-            categoryCrawler.crawlCategory(site, category);
+            categoryArticleCrawler.crawlCategory(site, category);
 
             return OK;
         };

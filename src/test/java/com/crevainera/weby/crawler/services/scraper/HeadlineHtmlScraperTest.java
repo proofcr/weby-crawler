@@ -1,6 +1,7 @@
 package com.crevainera.weby.crawler.services.scraper;
 
 import com.crevainera.weby.crawler.exception.WebyException;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -103,8 +104,8 @@ class HeadlineHtmlScraperTest {
                                                                          final String articleRule)
             throws WebyException {
         Document document = getDocument(documentUrl);
-        Element firstElement = headlineHtmlScraper.getArticleElements(document, articleRule).first();
-        String scrapedResult = headlineHtmlScraper.getPlainText(firstElement, rule);
+        Element firstElement = headlineHtmlScraper.getHeadLineElements(document, articleRule).first();
+        String scrapedResult = headlineHtmlScraper.getPlainText(firstElement, rule).orElse(StringUtils.EMPTY);
 
         assertEquals(scraped, scrapedResult);
     }

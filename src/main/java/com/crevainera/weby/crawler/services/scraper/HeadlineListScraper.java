@@ -27,7 +27,7 @@ public class HeadlineListScraper {
         this.scraper = scraper;
     }
 
-    public List<HeadLineDto> getHeadLinesFromDocument(final Document document, final ScrapRule scrapRule)
+    public List<HeadLineDto> getHeadLines(final Document document, final ScrapRule scrapRule)
             throws WebyException {
         List<HeadLineDto> headLineList = new ArrayList<>();
 

@@ -56,13 +56,11 @@ public class CategoryArticleCrawler {
         try {
             log.debug("crawling category: " + category.getUrl());
 
-            Document document = documentFromHtml.getDocument(category.getUrl());
+            Document categoryDocument = documentFromHtml.getDocument(category.getUrl());
 
-            List<HeadLineDto> categoryHeadLineDtoList = headlineListScraper.getHeadLinesFromDocument(document, scrapRule);
-
-            getNewHeadlines(categoryHeadLineDtoList).forEach(
+            filterNewCategoryHeadlines(headlineListScraper.getHeadLines(categoryDocument, scrapRule)).forEach(
                     headLine -> {
-                        Optional<Article> article = getArticleInAllCategories(headLine.getUrl());
+                        Optional<Article> article = getTheArticleForAllCategories(headLine.getUrl());
 
                         if (article.isPresent()) {
                             updateArticle(article.get(), category);
@@ -76,11 +74,11 @@ public class CategoryArticleCrawler {
         }
     }
 
-    private Optional<Article> getArticleInAllCategories(final String url) {
+    private Optional<Article> getTheArticleForAllCategories(final String url) {
         return Optional.ofNullable(articleRepository.findByUrl(url));
     }
 
-    private List<HeadLineDto> getNewHeadlines(final List<HeadLineDto> headLineDtoList) {
+    private List<HeadLineDto> filterNewCategoryHeadlines(final List<HeadLineDto> headLineDtoList) {
         Slice<Article> articleSlice = articleRepository.findAll(PageRequest.of(1, headLineDtoList.size()));
 
         List<String> databaseUrls = articleSlice.stream().map(article -> article.getUrl())

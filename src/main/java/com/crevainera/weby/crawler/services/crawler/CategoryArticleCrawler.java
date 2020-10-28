@@ -107,7 +107,10 @@ public class CategoryArticleCrawler {
         article.setScrapDate(new Date());
         article.setSite(site);
 
-        article.getLabelList().add(category.getLabel());
+        if (!article.getLabelList().contains(category.getLabel())) {
+            article.getLabelList().add(category.getLabel());
+        }
+
         articleRepository.save(article);
 
         if (site.getScrapThumbEnabled() && StringUtils.isNotBlank(article.getThumbUrl())) {

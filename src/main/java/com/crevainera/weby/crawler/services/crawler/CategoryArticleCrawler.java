@@ -55,7 +55,7 @@ public class CategoryArticleCrawler {
 
             Document categoryDocument = documentFromHtml.getDocument(category.getUrl());
 
-            filterNewCategoryHeadlines(category.getLabel(),
+            filterNewCategoryHeadlines(site, category,
                     headlineListScraper.getHeadLines(categoryDocument, scrapRule)).forEach(
                         headLine -> {
                             Optional<Article> article = getTheArticleForAllCategories(headLine.getUrl());
@@ -66,7 +66,7 @@ public class CategoryArticleCrawler {
                                 saveNewArticle(site, category, headLine);
                             }
                         }
-            );
+                );
         } catch (WebyException e) {
             log.error(String.format(CRAWLER_ERROR.getMessage(), e.getMessage(), category.getUrl()));
         }
@@ -76,9 +76,10 @@ public class CategoryArticleCrawler {
         return Optional.ofNullable(articleRepository.findByUrl(url));
     }
 
-    private List<HeadLineDto> filterNewCategoryHeadlines(final Label label, final List<HeadLineDto> headLineDtoList) {
+    private List<HeadLineDto> filterNewCategoryHeadlines(final Site site, final Category category,
+                                                         final List<HeadLineDto> headLineDtoList) {
 
-        Slice<Article> articleSlice = articleRepository.findByLabelList(label,
+        Slice<Article> articleSlice = articleRepository.findBySiteAndLabelList(site, category.getLabel(),
                 PageRequest.of(1, headLineDtoList.size()));
 
         if (articleSlice == null) {

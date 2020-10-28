@@ -42,6 +42,7 @@ class CategoryArticleCrawlerTest {
 
     private Site site;
     private Category category;
+    private Label label;
     private CategoryArticleCrawler categoryArticleCrawler;
 
 
@@ -55,8 +56,11 @@ class CategoryArticleCrawlerTest {
         site.setTitle("Site1");
         site.setScrapThumbEnabled(true);
 
+        label = new Label();
+
         category = new Category();
         category.setUrl(category1Url);
+        category.setLabel(label);
         category.setSiteId(site.getId());
         category.setScrapRule(scrapRule);
 
@@ -91,7 +95,8 @@ class CategoryArticleCrawlerTest {
 
         Slice<Article> storedArticleSlice = new SliceImpl<>(storedArticles);
 
-        doReturn(storedArticleSlice).when(articleRepository).findAll(any(PageRequest.class));
+        doReturn(storedArticleSlice).when(articleRepository).findBySiteAndLabelList(eq(site), eq(category.getLabel()),
+                any(PageRequest.class));
 
         categoryArticleCrawler.crawlCategory(site, category);
 

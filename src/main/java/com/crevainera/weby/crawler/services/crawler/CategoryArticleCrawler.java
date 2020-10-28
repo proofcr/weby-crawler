@@ -79,14 +79,19 @@ public class CategoryArticleCrawler {
     }
 
     private List<HeadLineDto> filterNewCategoryHeadlines(final List<HeadLineDto> headLineDtoList) {
+
         Slice<Article> articleSlice = articleRepository.findAll(PageRequest.of(1, headLineDtoList.size()));
 
-        List<String> databaseUrls = articleSlice.stream().map(article -> article.getUrl())
-                .collect(Collectors.toList());
+        if (articleSlice == null) {
+            return headLineDtoList;
+        } else {
+            List<String> databaseUrls = articleSlice.stream().map(article -> article.getUrl())
+                    .collect(Collectors.toList());
 
-        return headLineDtoList.stream()
-                .filter(headLineDto -> !databaseUrls.contains(headLineDto.getUrl()))
-                .collect(Collectors.toList());
+            return headLineDtoList.stream()
+                    .filter(headLineDto -> !databaseUrls.contains(headLineDto.getUrl()))
+                    .collect(Collectors.toList());
+        }
     }
 
     private void updateArticle(final Article article, final Category category) {

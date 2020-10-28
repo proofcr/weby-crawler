@@ -1,10 +1,7 @@
 package com.crevainera.weby.crawler.services.crawler;
 
 import com.crevainera.weby.crawler.dto.HeadLineDto;
-import com.crevainera.weby.crawler.entities.Article;
-import com.crevainera.weby.crawler.entities.Category;
-import com.crevainera.weby.crawler.entities.ScrapRule;
-import com.crevainera.weby.crawler.entities.Site;
+import com.crevainera.weby.crawler.entities.*;
 import com.crevainera.weby.crawler.exception.WebyException;
 import com.crevainera.weby.crawler.repositories.ArticleRepository;
 import com.crevainera.weby.crawler.services.html.HtmlDocumentConnector;
@@ -58,16 +55,17 @@ public class CategoryArticleCrawler {
 
             Document categoryDocument = documentFromHtml.getDocument(category.getUrl());
 
-            filterNewCategoryHeadlines(headlineListScraper.getHeadLines(categoryDocument, scrapRule)).forEach(
-                    headLine -> {
-                        Optional<Article> article = getTheArticleForAllCategories(headLine.getUrl());
+            filterNewCategoryHeadlines(category.getLabel(),
+                    headlineListScraper.getHeadLines(categoryDocument, scrapRule)).forEach(
+                        headLine -> {
+                            Optional<Article> article = getTheArticleForAllCategories(headLine.getUrl());
 
-                        if (article.isPresent()) {
-                            updateArticle(article.get(), category);
-                        } else {
-                            saveNewArticle(site, category, headLine);
+                            if (article.isPresent()) {
+                                updateArticle(article.get(), category);
+                            } else {
+                                saveNewArticle(site, category, headLine);
+                            }
                         }
-                    }
             );
         } catch (WebyException e) {
             log.error(String.format(CRAWLER_ERROR.getMessage(), e.getMessage(), category.getUrl()));
@@ -78,9 +76,10 @@ public class CategoryArticleCrawler {
         return Optional.ofNullable(articleRepository.findByUrl(url));
     }
 
-    private List<HeadLineDto> filterNewCategoryHeadlines(final List<HeadLineDto> headLineDtoList) {
+    private List<HeadLineDto> filterNewCategoryHeadlines(final Label label, final List<HeadLineDto> headLineDtoList) {
 
-        Slice<Article> articleSlice = articleRepository.findAll(PageRequest.of(1, headLineDtoList.size()));
+        Slice<Article> articleSlice = articleRepository.findByLabelList(label,
+                PageRequest.of(1, headLineDtoList.size()));
 
         if (articleSlice == null) {
             return headLineDtoList;

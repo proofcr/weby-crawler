@@ -56,16 +56,16 @@ public class CategoryArticleCrawler {
             Document categoryDocument = documentFromHtml.getDocument(category.getUrl());
 
             filterNewCategoryHeadlines(site, category,
-                    headlineListScraper.getHeadLines(categoryDocument, scrapRule)).forEach(
-                        headLine -> {
-                            Optional<Article> article = getTheArticleForAllCategories(headLine.getUrl());
+                headlineListScraper.getHeadLines(categoryDocument, scrapRule)).forEach(
+                    headLine -> {
+                        Optional<Article> article = getTheArticleForAllCategories(headLine.getUrl());
 
-                            if (article.isPresent()) {
-                                updateArticle(article.get(), category);
-                            } else {
-                                saveNewArticle(site, category, headLine);
-                            }
+                        if (article.isPresent()) {
+                            updateArticle(article.get(), category);
+                        } else {
+                            saveNewArticle(site, category, headLine);
                         }
+                    }
                 );
         } catch (WebyException e) {
             log.error(String.format(CRAWLER_ERROR.getMessage(), e.getMessage(), category.getUrl()));
@@ -82,16 +82,19 @@ public class CategoryArticleCrawler {
         Slice<Article> articleSlice = articleRepository.findBySiteAndLabelList(site, category.getLabel(),
                 PageRequest.of(1, headLineDtoList.size()));
 
-        if (articleSlice == null) {
-            return headLineDtoList;
-        } else {
+        if (articleSlice != null) {
             List<String> databaseUrls = articleSlice.stream().map(article -> article.getUrl())
                     .collect(Collectors.toList());
 
-            return headLineDtoList.stream()
-                    .filter(headLineDto -> !databaseUrls.contains(headLineDto.getUrl()))
-                    .collect(Collectors.toList());
+            if (!databaseUrls.isEmpty()) {
+                return headLineDtoList.stream()
+                        .filter(headLineDto -> !databaseUrls.contains(headLineDto.getUrl()))
+                        .collect(Collectors.toList());
+            }
         }
+
+        return headLineDtoList;
+
     }
 
     private void updateArticle(final Article article, final Category category) {

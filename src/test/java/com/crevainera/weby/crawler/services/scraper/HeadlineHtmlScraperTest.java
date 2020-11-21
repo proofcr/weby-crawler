@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class HeadlineHtmlScraperTest {
 
     private static final String SITE_DIRECTORY = "sites/headlines/";
-    private static final String SITE_AHORALASFLORES_HTML = SITE_DIRECTORY + "ahoralasflores.html";
-    private static final String SITE_NOTICIASLASFLORES_HTML = SITE_DIRECTORY + "noticiaslasflores.html";
-    private static final String SITE_PLAY_RADIOS_HTML = SITE_DIRECTORY + "playradios.html";
+    private static final String SITE_AHORALASFLORES_HTML = SITE_DIRECTORY + "ahoralasflores-9-29-2020-html.test";
+    private static final String SITE_NOTICIASLASFLORES_HTML = SITE_DIRECTORY + "noticiaslasflores-9-29-2020-html.test";
+    private static final String SITE_PLAY_RADIOS_HTML = SITE_DIRECTORY + "playradios-9-29-2020-html.test";
     private static final String ARTICLE_SCRIPT_NLF_ALF_TEXT = "$input.getElementsByTag(\"article\")";
     private static final String ARTICLE_SCRIPT_PLAY_RADIOS_TEXT = "$input.getElementsByClass(\"td_module_wrap\")";
 

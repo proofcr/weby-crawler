@@ -10,12 +10,12 @@ import javax.annotation.PostConstruct;
 
 @Component
 @Slf4j
-public class CrawlerScheduler {
+public class HeadLinesScheduler {
 
     private SiteCategoryCrawler crawlerSitePool;
 
     @Autowired
-    public CrawlerScheduler(final SiteCategoryCrawler crawlerSitePool) {
+    public HeadLinesScheduler(final SiteCategoryCrawler crawlerSitePool) {
         this.crawlerSitePool = crawlerSitePool;
     }
 
